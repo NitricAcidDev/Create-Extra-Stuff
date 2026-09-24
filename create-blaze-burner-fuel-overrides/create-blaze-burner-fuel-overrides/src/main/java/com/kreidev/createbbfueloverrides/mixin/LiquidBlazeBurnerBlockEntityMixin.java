@@ -32,11 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = LiquidBlazeBurnerBlockEntity.class, remap = false, priority = 500)
 public abstract class LiquidBlazeBurnerBlockEntityMixin {
 
-    @Unique private double createbbfueloverrides$consumptionRemainder;
-    @Unique private double createbbfueloverrides$burnRemainder;
-    @Unique private int createbbfueloverrides$pulseTicks;
-    private static final int CREATEBBFUELOVERRIDES_PULSE_INTERVAL = 1;
-
     @Shadow
     protected FluidTank tankInventory;
 
@@ -134,16 +129,7 @@ public abstract class LiquidBlazeBurnerBlockEntityMixin {
             return;
         }
 
-        // Match the Liquid Blaze Burner/lava cadence: evaluate and consume fuel every tick.
-        if (++createbbfueloverrides$pulseTicks < CREATEBBFUELOVERRIDES_PULSE_INTERVAL) {
-            return;
-        }
-        createbbfueloverrides$pulseTicks = 0;
-
-        double requested = values.consumptionMbPerTick() * CREATEBBFUELOVERRIDES_PULSE_INTERVAL
-                + createbbfueloverrides$consumptionRemainder;
-        int consume = (int) Math.floor(requested);
-        createbbfueloverrides$consumptionRemainder = requested - consume;
+        int consume = 100;
         if (tankInventory.getFluidAmount() < consume) {
             return;
         }
@@ -151,11 +137,9 @@ public abstract class LiquidBlazeBurnerBlockEntityMixin {
             return;
         }
 
-        // CSV Total Heat Units are expressed per bucket. Convert them to ticks per mB:
-        // naphtha 36000 HU / 1000 = 36 ticks per mB.
-        double burn = consume * values.totalHeatUnits() / 1000.0 + createbbfueloverrides$burnRemainder;
-        int burnTicks = (int) Math.floor(burn);
-        createbbfueloverrides$burnRemainder = burn - burnTicks;
+        // CSV Total Heat Units are expressed per bucket. Convert them to ticks per 100 mB event:
+        // naphtha 36000 HU / 1000 * 100 = 3600 ticks.
+        int burnTicks = (int) Math.round(consume * values.totalHeatUnits() / 1000.0);
         if (burnTicks < 1) return;
         LiquidBlazeBurnerBlockEntity.FuelType fuelType = values.heatLevel() == BlazeBurnerBlock.HeatLevel.SEETHING
                 ? LiquidBlazeBurnerBlockEntity.FuelType.SPECIAL : LiquidBlazeBurnerBlockEntity.FuelType.NORMAL;
