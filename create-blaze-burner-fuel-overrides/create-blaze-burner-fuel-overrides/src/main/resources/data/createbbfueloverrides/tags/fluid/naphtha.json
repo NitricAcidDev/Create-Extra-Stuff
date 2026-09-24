@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "createaddition:naphtha",
+      "required": false
+    },
+    {
+      "id": "createaddition:naphta",
+      "required": false
+    }
+  ]
+}

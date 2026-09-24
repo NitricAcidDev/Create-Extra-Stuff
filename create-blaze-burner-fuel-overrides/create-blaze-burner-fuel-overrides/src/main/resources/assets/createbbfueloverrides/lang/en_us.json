@@ -1,0 +1,8 @@
+{
+  "createbbfueloverrides.configuration.naphtaEnabled": "Enable Naphta Fuel",
+  "createbbfueloverrides.configuration.naphtaEnabled.tooltip": "Allow Create Crafts & Additions Naphta to burn in the Liquid Blaze Burner as superheated fuel.",
+  "createbbfueloverrides.configuration.consumptionPerTick": "Naphta Consumption (mB/t)",
+  "createbbfueloverrides.configuration.consumptionPerTick.tooltip": "Millibuckets of Naphta consumed per tick while burning. Default: 1",
+  "createbbfueloverrides.configuration.burnTicksPerMillibucket": "Naphta Burn Ticks per mB",
+  "createbbfueloverrides.configuration.burnTicksPerMillibucket.tooltip": "Burn ticks granted per millibucket of Naphta consumed. Default: 36"
+}
