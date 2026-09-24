@@ -1,0 +1,6 @@
+# Build output and nested source checkouts
+**/build/
+**/build2/
+**/.gradle/
+create-blaze-burner-fuel-overrides/cca-source/
+create-blaze-burner-fuel-overrides/create-source/
