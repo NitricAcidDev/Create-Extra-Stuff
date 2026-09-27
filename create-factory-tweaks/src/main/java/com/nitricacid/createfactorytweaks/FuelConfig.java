@@ -8,7 +8,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class FuelConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec.BooleanValue LOCK_DEFAULTS = BUILDER
-            .comment("Checked: enforce built-in defaults and ignore overrides. Uncheck to use custom values. Changes apply to future fuel charges and distillation batches.")
+            .comment("Checked: enforce built-in defaults and ignore overrides. Uncheck to use custom values. Changes apply to newly added burner fuel. Distillation uses original recipe outputs.")
             .translation("createfactorytweaks.configuration.lockDefaults")
             .define("lockDefaults", true);
     public static final ModConfigSpec.BooleanValue ENABLED = BUILDER
@@ -26,9 +26,6 @@ public final class FuelConfig {
     private record Settings(ModConfigSpec.BooleanValue enabled, ModConfigSpec.DoubleValue duration,
                             ModConfigSpec.EnumValue<BlazeBurnerBlock.HeatLevel> heat) {}
     private static final Map<String, Settings> FUELS = new LinkedHashMap<>();
-    private static final Map<String, ModConfigSpec.IntValue> OUTPUTS = new LinkedHashMap<>();
-    private static final Map<String, Integer> OUTPUT_DEFAULTS = new LinkedHashMap<>();
-    private static final Map<String, Integer> OUTPUT_BASELINES = new LinkedHashMap<>();
     public static final ModConfigSpec SPEC;
     static {
         BUILDER.translation("createfactorytweaks.configuration.blazeBurnerFuels").push("blazeBurnerFuels");
@@ -46,23 +43,7 @@ public final class FuelConfig {
             BUILDER.pop();
         }
         BUILDER.pop();
-        BUILDER.translation("createfactorytweaks.configuration.distillationOutputs").push("distillationOutputs");
-        output("heavy_oil", 100, 120);
-        output("diesel", 60, 60);
-        output("kerosene", 30, 30);
-        output("naphtha", 30, 10);
-        output("gasoline", 60, 60);
-        output("lpg", 60, 60);
-        output("lubrication_oil", 25, 25);
-        BUILDER.pop();
         SPEC = BUILDER.build();
-    }
-    private static void output(String fluid, int amount, int baseline) {
-        OUTPUT_DEFAULTS.put(fluid, amount);
-        OUTPUT_BASELINES.put(fluid, baseline);
-        OUTPUTS.put(fluid, BUILDER.comment("Reference output mB for " + fluid + ". Other distillation recipes scale automatically using their original proportions.")
-                .translation("createfactorytweaks.configuration.output." + fluid)
-                .defineInRange(fluid + "Mb", amount, 1, 100000));
     }
     public static boolean locked() { return !SPEC.isLoaded() || LOCK_DEFAULTS.get(); }
     public static boolean enabled() { return locked() || ENABLED.get(); }
@@ -80,10 +61,5 @@ public final class FuelConfig {
         FuelValues values = values(fuel, defaults);
         return values.burnDurationSecondsPerBucket() > 0 && values.heatLevel() != BlazeBurnerBlock.HeatLevel.NONE
                 && (locked() ? !fuel.equals("heavy_oil") : FUELS.get(fuel).enabled.get());
-    }
-    public static int outputAmount(String recipe, String fluid, int original) {
-        if (!OUTPUTS.containsKey(fluid)) return original;
-        int reference = locked() ? OUTPUT_DEFAULTS.get(fluid) : OUTPUTS.get(fluid).get();
-        return Math.max(1, (int) Math.round(original * (double) reference / OUTPUT_BASELINES.get(fluid)));
     }
 }

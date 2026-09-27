@@ -9,6 +9,6 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Mod(value = FactoryTweaks.MOD_ID, dist = Dist.CLIENT)
 public final class ClientConfig {
     public ClientConfig(ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, (mod, parent) -> new FactoryTweaksConfigScreen(mod, parent));
     }
 }

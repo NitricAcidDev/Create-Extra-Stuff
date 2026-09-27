@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LiquidBlazeBurnerBlockEntityMixin",
-    "BlazeBurnerBlockEntityMixin",
-    "DistillationOutputsMixin"
+    "BlazeBurnerBlockEntityMixin"
   ],
   "minVersion": "0.8.5",
   "injectors": {
