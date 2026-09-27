@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "priority": 500,
+  "package": "com.nitricacid.createfactorytweaks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LiquidBlazeBurnerBlockEntityMixin",
+    "BlazeBurnerBlockEntityMixin",
+    "DistillationOutputsMixin"
+  ],
+  "minVersion": "0.8.5",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

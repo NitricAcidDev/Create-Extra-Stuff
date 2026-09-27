@@ -1,0 +1,7 @@
+{
+  "creativecreatetoolsfabrications.configuration.title": "Create: Creative Tools Fabrications",
+  "creativecreatetoolsfabrications.configuration.refillWrench": "Restore Create wrench",
+  "creativecreatetoolsfabrications.configuration.refillWrench.tooltip": "Automatically restore your Create wrench if it is missing while you are in creative mode.",
+  "creativecreatetoolsfabrications.configuration.refillPhysicsStaff": "Restore physics staff",
+  "creativecreatetoolsfabrications.configuration.refillPhysicsStaff.tooltip": "Automatically restore your physics staff if it is missing while you are in creative mode."
+}

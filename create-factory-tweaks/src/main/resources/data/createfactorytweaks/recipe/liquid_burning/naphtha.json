@@ -1,0 +1,13 @@
+{
+  "type": "createaddition:liquid_burning",
+  "burn_time": 36000,
+  "superheated": true,
+  "ingredients": [
+    {
+      "type": "neoforge:tag",
+      "amount": 1000,
+      "tag": "createfactorytweaks:naphtha"
+    }
+  ],
+  "results": []
+}
