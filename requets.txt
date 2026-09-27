@@ -22,7 +22,7 @@ and also use the icons I have in the root and put them to the suitable mod like 
 
 don't move the psb/psd files
 
-also can you change distilation settings so heavy oil is 100mB instead of 120 mB and naptha is 30mB instead of 10mB and make it configurable
+also can you change distilation settings so heavy oil is 100mB instead of 120 mB and naptha is 30mB instead of 10mB and make it configurable for all fuels, make the config so they are the default values and have a lock by default and all thing should be sorted in "folders" so there could be Blaze Burner Fuels then each fuel and then each stat and it should change without reloading world  same with Distilation Outputs for all fuels but no sub folder for each fuel
 
 
 dont change any of the existing logic for fuel and stuff since thats proven to work and stuff
