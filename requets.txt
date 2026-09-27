@@ -1,0 +1,15 @@
+make naptha burn for longer: like 20% burn time per bucket.)
+
+increase burn time of LPG a bit: ()
+
+rename the fuel mod to Create: Factory Tweaks including the folders and everything
+
+make all references to creators as NitricAcid
+
+make everything configurable for the fuel mod but make it so by default theres a tick that locks all the settings and you have to untick it to allow overrides and stuff so you can change the fuel values ingame 
+
+rename the tools mod to Create: Creative Tools Fabrications 
+
+and also use the icons I have in the root and put them to the suitable mod like put the blaze burner one to the factory tweaks and stuff and give both of them a suitable and a simple description, (move them to respective places and rename to corect names if needed)
+
+also can you change distilation settings so heavy oil is 100mB instead of 120 mB and naptha is 30mB instead of 10mB and make it configurable
