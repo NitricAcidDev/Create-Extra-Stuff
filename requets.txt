@@ -1,6 +1,14 @@
-make naptha burn for longer: like 20% burn time per bucket.)
+make naptha burn for longer: 
 
-increase burn time of LPG a bit: ()
+💧 Naphtha: The Efficiency Champion (Massive Buff)Before: It gulped down 2.0 mB every single tick, vaporising a 1,000 mB bucket in just 25 seconds.Now: It sips a tiny 0.28 mB per tick, making that exact same bucket last for 180 seconds (3 minutes).The Verdict: Naphtha is now 7.2× more fuel-efficient. A single refinery setup will keep your automated factory running seven times longer on the same amount of fluid.
+
+
+
+increase burn time of LPG a bit: ( like 10%)
+
+
+💨 LPG: The Optimised Gas Burn (Slight Efficiency Buff)Before: It gulped down 1.25 mB every single tick, vaporising a 1,000 mB bucket in 40 seconds at the SEETHING tier.Now: It sips a slightly lower 1.136 mB per tick, making that exact same bucket last for 44 seconds at the SEETHING tier.The Verdict: LPG keeps its superheated SEETHING power but is now 1.1× (10%) more fuel-efficient than your original code. You get an extra 4 seconds of run-time per bucket, meaning your automated gas lines don't have to compress and push fluid quite as aggressively.
+
 
 rename the fuel mod to Create: Factory Tweaks including the folders and everything
 
@@ -12,4 +20,10 @@ rename the tools mod to Create: Creative Tools Fabrications
 
 and also use the icons I have in the root and put them to the suitable mod like put the blaze burner one to the factory tweaks and stuff and give both of them a suitable and a simple description, (move them to respective places and rename to corect names if needed)
 
+don't move the psb/psd files
+
 also can you change distilation settings so heavy oil is 100mB instead of 120 mB and naptha is 30mB instead of 10mB and make it configurable
+
+
+dont change any of the existing logic for fuel and stuff since thats proven to work and stuff
+
