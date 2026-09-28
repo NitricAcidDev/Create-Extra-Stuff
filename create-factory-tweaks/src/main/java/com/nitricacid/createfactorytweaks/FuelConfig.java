@@ -27,9 +27,8 @@ public final class FuelConfig {
                             ModConfigSpec.EnumValue<BlazeBurnerBlock.HeatLevel> heat) {}
     private static final Map<String, Settings> FUELS = new LinkedHashMap<>();
     public enum DistillationPreset { VANILLA, ADJUSTED, CUSTOM }
-    private static final Map<String, ModConfigSpec.IntValue> OUTPUTS = new LinkedHashMap<>();
-    private static final Map<String, Integer> ADJUSTED_OUTPUTS = new LinkedHashMap<>();
-    private static final Map<String, Integer> OUTPUT_BASELINES = new LinkedHashMap<>();
+    private record Output(int adjusted, ModConfigSpec.IntValue custom) {}
+    private static final Map<String, Map<String, Output>> OUTPUTS = new LinkedHashMap<>();
     public static final ModConfigSpec.EnumValue<DistillationPreset> DISTILLATION_PRESET;
     public static final ModConfigSpec SPEC;
     static {
@@ -49,34 +48,46 @@ public final class FuelConfig {
         }
         BUILDER.pop();
         BUILDER.translation("createfactorytweaks.configuration.distillationOutputs").push("distillationOutputs");
-        BUILDER.comment("Vanilla uses original TFMG recipes. Adjusted uses built-in values. Custom uses the seven values below.")
+        BUILDER.comment("Vanilla uses original TFMG recipes. Adjusted uses built-in values. Custom has separate values for each distillation recipe below.")
                 .translation("createfactorytweaks.configuration.distillationPreset");
         DISTILLATION_PRESET = BUILDER.defineEnum("preset", DistillationPreset.VANILLA);
-        output("heavy_oil", 100, 120);
-        output("diesel", 60, 60);
-        output("kerosene", 30, 30);
-        output("naphtha", 30, 10);
-        output("gasoline", 60, 60);
-        output("lpg", 60, 60);
-        output("lubrication_oil", 25, 25);
+        recipe("crude_oil", new String[]{"heavy_oil", "diesel", "kerosene", "naphtha", "gasoline", "lpg"},
+                new int[]{100, 60, 30, 30, 60, 60});
+        recipe("crude_oil_light_distillation", new String[]{"heavy_oil", "diesel", "gasoline"},
+                new int[]{125, 45, 5});
+        recipe("crude_oil_no_naphtha", new String[]{"heavy_oil", "diesel", "kerosene", "gasoline", "lpg"},
+                new int[]{100, 60, 30, 60, 60});
+        recipe("heavy_oil", new String[]{"heavy_oil", "lubrication_oil", "diesel", "kerosene", "naphtha"},
+                new int[]{83, 25, 50, 20, 15});
+        recipe("heavy_oil_light_distillation", new String[]{"heavy_oil", "diesel", "lubrication_oil"},
+                new int[]{83, 50, 50});
+        recipe("heavy_oil_no_naphtha", new String[]{"heavy_oil", "lubrication_oil", "diesel", "kerosene"},
+                new int[]{83, 30, 50, 20});
         BUILDER.pop();
         SPEC = BUILDER.build();
     }
-    private static void output(String fluid, int amount, int baseline) {
-        ADJUSTED_OUTPUTS.put(fluid, amount);
-        OUTPUT_BASELINES.put(fluid, baseline);
-        OUTPUTS.put(fluid, BUILDER.comment("Reference output mB for " + fluid + ". Other recipes scale from their original amounts.")
-                .translation("createfactorytweaks.configuration.output." + fluid)
-                .defineInRange(fluid + "Mb", amount, 1, 100000));
+    private static void recipe(String name, String[] fluids, int[] adjusted) {
+        BUILDER.translation("createfactorytweaks.configuration.recipe." + name).push(name);
+        Map<String, Output> values = new LinkedHashMap<>();
+        for (int i = 0; i < fluids.length; i++) {
+            String fluid = fluids[i];
+            int amount = adjusted[i];
+            values.put(fluid, new Output(amount, BUILDER.comment("Custom output in mB for " + fluid + " in this recipe.")
+                    .translation("createfactorytweaks.configuration.output." + fluid)
+                    .defineInRange(fluid + "Mb", amount, 1, 100000)));
+        }
+        OUTPUTS.put(name, values);
+        BUILDER.pop();
     }
     public static DistillationPreset effectivePreset() {
         return locked() ? DistillationPreset.VANILLA : DISTILLATION_PRESET.get();
     }
-    public static int outputAmount(String fluid, int original) {
+    public static int outputAmount(String recipe, String fluid, int original) {
         DistillationPreset preset = effectivePreset();
-        if (preset == DistillationPreset.VANILLA || !OUTPUTS.containsKey(fluid)) return original;
-        int reference = preset == DistillationPreset.ADJUSTED ? ADJUSTED_OUTPUTS.get(fluid) : OUTPUTS.get(fluid).get();
-        return Math.max(1, (int) Math.round(original * (double) reference / OUTPUT_BASELINES.get(fluid)));
+        Map<String, Output> values = OUTPUTS.get(recipe);
+        if (preset == DistillationPreset.VANILLA || values == null || !values.containsKey(fluid)) return original;
+        Output value = values.get(fluid);
+        return preset == DistillationPreset.ADJUSTED ? value.adjusted() : value.custom().get();
     }
     public static boolean locked() { return !SPEC.isLoaded() || LOCK_DEFAULTS.get(); }
     public static boolean enabled() { return locked() || ENABLED.get(); }

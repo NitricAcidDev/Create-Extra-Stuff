@@ -23,7 +23,14 @@ public final class ConfigRegression {
         check(FuelValues.maxStoredTicks(pumpLimit) == pumpLimit + value("diesel").bucketBurnTicks(),
                 "Previously stacked time limited to threshold plus one full bucket");
         check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.VANILLA, "Vanilla is the default preset");
-        check(FuelConfig.outputAmount("naphtha", 10) == 10, "Vanilla keeps original outputs");
+        check(FuelConfig.outputAmount("crude_oil", "naphtha", 10) == 10, "Vanilla keeps original outputs");
+        checkRecipe("crude_oil", "crude_oil", "heavy_oil", "diesel", "kerosene", "naphtha", "gasoline", "lpg");
+        checkRecipe("crude_oil_light_distillation", "crude_oil", "heavy_oil", "diesel", "gasoline");
+        checkRecipe("crude_oil_no_naphtha", "crude_oil", "heavy_oil", "diesel", "kerosene", "gasoline", "lpg");
+        checkRecipe("heavy_oil", "heavy_oil", "heavy_oil", "lubrication_oil", "diesel", "kerosene", "naphtha");
+        checkRecipe("heavy_oil_light_distillation", "heavy_oil", "heavy_oil", "diesel", "lubrication_oil");
+        checkRecipe("heavy_oil_no_naphtha", "heavy_oil", "heavy_oil", "lubrication_oil", "diesel", "kerosene");
+        check(DistillationRecipes.identify("heavy_oil", java.util.Set.of("diesel")) == null, "Unknown recipe stays untouched");
         FuelConfig.ENABLED.set(false);
         FuelConfig.CHARGE_AMOUNT.set(200);
         ModConfigSpec.DoubleValue duration = FuelConfig.SPEC.getValues().get("blazeBurnerFuels.naphtha.liquidBurnSecondsPer100Mb");
@@ -41,17 +48,22 @@ public final class ConfigRegression {
         heat.set(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING);
         FuelConfig.DISTILLATION_PRESET.set(FuelConfig.DistillationPreset.ADJUSTED);
         check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.ADJUSTED, "Adjusted preset activates when unlocked");
-        check(FuelConfig.outputAmount("naphtha", 10) == 30, "Adjusted naphtha default");
-        check(FuelConfig.outputAmount("heavy_oil", 150) == 125, "Adjusted recipe variants scale");
-        ModConfigSpec.IntValue naphtha = FuelConfig.SPEC.getValues().get("distillationOutputs.naphthaMb");
+        check(FuelConfig.outputAmount("crude_oil", "naphtha", 10) == 30, "Adjusted crude naphtha");
+        check(FuelConfig.outputAmount("heavy_oil", "naphtha", 5) == 15, "Adjusted heavy oil naphtha");
+        check(FuelConfig.outputAmount("crude_oil_light_distillation", "heavy_oil", 150) == 125, "Adjusted crude light value");
+        ModConfigSpec.IntValue naphtha = FuelConfig.SPEC.getValues().get("distillationOutputs.crude_oil.naphthaMb");
         naphtha.set(50);
-        check(FuelConfig.outputAmount("naphtha", 5) == 15, "Adjusted stays fixed when custom values change");
+        check(FuelConfig.outputAmount("crude_oil", "naphtha", 10) == 30, "Adjusted stays fixed when custom values change");
         FuelConfig.DISTILLATION_PRESET.set(FuelConfig.DistillationPreset.CUSTOM);
-        check(FuelConfig.outputAmount("naphtha", 5) == 25, "Custom output edits apply live");
-        check(FuelConfig.outputAmount("heavy_oil", 150) == 125, "Custom recipe variants scale");
+        check(FuelConfig.outputAmount("crude_oil", "naphtha", 10) == 50, "Crude custom output edits apply live");
+        check(FuelConfig.outputAmount("heavy_oil", "naphtha", 5) == 15, "Heavy oil custom output stays separate");
+        ModConfigSpec.IntValue heavyNaphtha = FuelConfig.SPEC.getValues().get("distillationOutputs.heavy_oil.naphthaMb");
+        heavyNaphtha.set(20);
+        check(FuelConfig.outputAmount("heavy_oil", "naphtha", 5) == 20, "Heavy oil custom output edits apply live");
+        check(FuelConfig.outputAmount("crude_oil", "naphtha", 10) == 50, "Heavy oil edits do not change crude oil");
         FuelConfig.LOCK_DEFAULTS.set(true);
         check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.VANILLA, "Lock forces vanilla output");
-        check(FuelConfig.outputAmount("naphtha", 5) == 5, "Lock ignores custom output");
+        check(FuelConfig.outputAmount("heavy_oil", "naphtha", 5) == 5, "Lock ignores custom output");
         FuelConfig.LOCK_DEFAULTS.set(false);
         check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.CUSTOM, "Unlock restores selected custom preset");
         FuelConfig.LOCK_DEFAULTS.set(true);
@@ -81,8 +93,11 @@ public final class ConfigRegression {
         check(!FuelConfig.fuelEnabled("lpg") && value("lpg").consumptionMbPerTick() == 0, "Zero duration disables fuel without division by zero");
         check(value("naphtha").addBucketTicks(Integer.MAX_VALUE - 1, true) == Integer.MAX_VALUE, "Bucket accumulation cannot overflow");
         check(FuelConfig.SPEC.getValues().get("blazeBurnerFuels.naphtha.solidBucketHeatUnits") == null, "No conflicting solid burner setting");
-        System.out.println("PASS: synchronized normal/liquid buckets and charges, no clipping or overflow, updated rates, shared live settings, locking and heat tiers; vanilla default, fixed adjusted outputs and editable custom scaling");
+        System.out.println("PASS: burner fuel limits and rates; vanilla default, fixed adjusted outputs, separate crude/heavy custom recipes, and locking");
     }
     private static FuelValues value(String fuel) { return FuelConfig.values(fuel, FuelValues.DEFAULTS.get(fuel)); }
+    private static void checkRecipe(String expected, String input, String... outputs) {
+        check(expected.equals(DistillationRecipes.identify(input, java.util.Set.of(outputs))), "Identify " + expected);
+    }
     private static void check(boolean condition, String message) { if (!condition) throw new AssertionError(message); }
 }
