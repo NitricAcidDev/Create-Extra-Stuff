@@ -15,6 +15,15 @@ public final class ConfigRegression {
         Object loaded = constructor.newInstance(data, null, null);
         accept.invoke(FuelConfig.SPEC, loaded);
         check(FuelConfig.locked(), "Default lock");
+        // The Create Addition capacity is read from a loaded game config, so test
+        // the shared gate with its standard 10,000-tick value in this headless run.
+        int pumpLimit = 10000;
+        check(FuelValues.canFeed(pumpLimit, pumpLimit), "Bucket allowed exactly at pump limit");
+        check(!FuelValues.canFeed(pumpLimit + 1, pumpLimit), "Bucket blocked above pump limit even with overflow");
+        check(FuelValues.maxStoredTicks(pumpLimit) == pumpLimit + value("diesel").bucketBurnTicks(),
+                "Previously stacked time limited to threshold plus one full bucket");
+        check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.VANILLA, "Vanilla is the default preset");
+        check(FuelConfig.outputAmount("naphtha", 10) == 10, "Vanilla keeps original outputs");
         FuelConfig.ENABLED.set(false);
         FuelConfig.CHARGE_AMOUNT.set(200);
         ModConfigSpec.DoubleValue duration = FuelConfig.SPEC.getValues().get("blazeBurnerFuels.naphtha.liquidBurnSecondsPer100Mb");
@@ -30,6 +39,21 @@ public final class ConfigRegression {
         heat.set(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED);
         check(value("naphtha").heatLevel() == com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED, "Live heat update is shared");
         heat.set(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING);
+        FuelConfig.DISTILLATION_PRESET.set(FuelConfig.DistillationPreset.ADJUSTED);
+        check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.ADJUSTED, "Adjusted preset activates when unlocked");
+        check(FuelConfig.outputAmount("naphtha", 10) == 30, "Adjusted naphtha default");
+        check(FuelConfig.outputAmount("heavy_oil", 150) == 125, "Adjusted recipe variants scale");
+        ModConfigSpec.IntValue naphtha = FuelConfig.SPEC.getValues().get("distillationOutputs.naphthaMb");
+        naphtha.set(50);
+        check(FuelConfig.outputAmount("naphtha", 5) == 15, "Adjusted stays fixed when custom values change");
+        FuelConfig.DISTILLATION_PRESET.set(FuelConfig.DistillationPreset.CUSTOM);
+        check(FuelConfig.outputAmount("naphtha", 5) == 25, "Custom output edits apply live");
+        check(FuelConfig.outputAmount("heavy_oil", 150) == 125, "Custom recipe variants scale");
+        FuelConfig.LOCK_DEFAULTS.set(true);
+        check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.VANILLA, "Lock forces vanilla output");
+        check(FuelConfig.outputAmount("naphtha", 5) == 5, "Lock ignores custom output");
+        FuelConfig.LOCK_DEFAULTS.set(false);
+        check(FuelConfig.effectivePreset() == FuelConfig.DistillationPreset.CUSTOM, "Unlock restores selected custom preset");
         FuelConfig.LOCK_DEFAULTS.set(true);
         check(value("naphtha").burnDurationSecondsPerBucket() == 1850, "Relock restores defaults");
         String[] fuels = {"lpg", "naphtha", "gasoline", "kerosene", "diesel"};
@@ -57,7 +81,7 @@ public final class ConfigRegression {
         check(!FuelConfig.fuelEnabled("lpg") && value("lpg").consumptionMbPerTick() == 0, "Zero duration disables fuel without division by zero");
         check(value("naphtha").addBucketTicks(Integer.MAX_VALUE - 1, true) == Integer.MAX_VALUE, "Bucket accumulation cannot overflow");
         check(FuelConfig.SPEC.getValues().get("blazeBurnerFuels.naphtha.solidBucketHeatUnits") == null, "No conflicting solid burner setting");
-        System.out.println("PASS: synchronized normal/liquid buckets and charges, no clipping or overflow, updated rates, shared live settings, locking and heat tiers; distillation override removed");
+        System.out.println("PASS: synchronized normal/liquid buckets and charges, no clipping or overflow, updated rates, shared live settings, locking and heat tiers; vanilla default, fixed adjusted outputs and editable custom scaling");
     }
     private static FuelValues value(String fuel) { return FuelConfig.values(fuel, FuelValues.DEFAULTS.get(fuel)); }
     private static void check(boolean condition, String message) { if (!condition) throw new AssertionError(message); }

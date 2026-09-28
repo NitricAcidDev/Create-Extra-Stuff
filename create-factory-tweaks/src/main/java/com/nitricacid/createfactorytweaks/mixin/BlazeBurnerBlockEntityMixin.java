@@ -3,6 +3,7 @@ package com.nitricacid.createfactorytweaks.mixin;
 import com.nitricacid.createfactorytweaks.FuelConfig;
 import com.nitricacid.createfactorytweaks.FuelValues;
 import com.nitricacid.createfactorytweaks.NaphthaFuel;
+import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = BlazeBurnerBlockEntity.class, remap = false, priority = 500)
 public abstract class BlazeBurnerBlockEntityMixin {
@@ -24,6 +26,16 @@ public abstract class BlazeBurnerBlockEntityMixin {
     @Shadow protected abstract void playSound();
     @Shadow public abstract void updateBlockState();
     @Shadow public abstract void spawnParticleBurst(boolean soulFlame);
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void createfactorytweaks$clampLegacyBucketStack(CallbackInfo ci) {
+        BlazeBurnerBlockEntity self = (BlazeBurnerBlockEntity) (Object) this;
+        if (self.getLevel() == null || self.getLevel().isClientSide()) return;
+        // A charged bucket can legitimately exceed the pump threshold once. Cap only
+        // older stacked states beyond one complete bucket plus that threshold.
+        remainingBurnTime = Math.min(remainingBurnTime,
+                FuelValues.maxStoredTicks(LiquidBlazeBurnerBlockEntity.MAX_HEAT_CAPACITY));
+    }
 
     @Inject(method = "tryUpdateFuel", at = @At("HEAD"), cancellable = true)
     private void createfactorytweaks$tryUpdateFuel(ItemStack stack, boolean forceOverflow, boolean simulate,
@@ -34,6 +46,10 @@ public abstract class BlazeBurnerBlockEntityMixin {
         if (fluidStack == null) return;
         FuelValues values = NaphthaFuel.values(fluidStack.getFluid());
         if (values == null) return;
+        if (!FuelValues.canFeed(remainingBurnTime, LiquidBlazeBurnerBlockEntity.MAX_HEAT_CAPACITY)) {
+            cir.setReturnValue(false);
+            return;
+        }
         if (!NaphthaFuel.enabled(fluidStack.getFluid()) || values.bucketBurnTicks() <= 0) {
             cir.setReturnValue(false);
             return;

@@ -17,7 +17,7 @@ public class FactoryTweaks {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public FactoryTweaks(IEventBus modEventBus, ModContainer container) {
-        container.registerConfig(ModConfig.Type.SERVER, FuelConfig.SPEC);
+        container.registerConfig(ModConfig.Type.COMMON, FuelConfig.SPEC);
     }
 
     public static ResourceLocation resLoc(String path) {

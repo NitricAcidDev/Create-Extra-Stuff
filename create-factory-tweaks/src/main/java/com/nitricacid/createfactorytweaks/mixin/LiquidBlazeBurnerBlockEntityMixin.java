@@ -137,7 +137,7 @@ public abstract class LiquidBlazeBurnerBlockEntityMixin {
         if (tankInventory.getFluidAmount() < consume) {
             return;
         }
-        if (remainingBurnTime > LiquidBlazeBurnerBlockEntity.MAX_HEAT_CAPACITY) {
+        if (!FuelValues.canFeed(remainingBurnTime, LiquidBlazeBurnerBlockEntity.MAX_HEAT_CAPACITY)) {
             return;
         }
 

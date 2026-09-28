@@ -20,6 +20,17 @@ public record FuelValues(double consumptionMbPerTick, double burnDurationSeconds
         return (int) Math.round(amountMb * burnDurationSecondsPerBucket * 20.0 / 1000.0);
     }
     public int bucketBurnTicks() { return burnTicks(1000); }
+    public static boolean canFeed(int remainingTicks, int maxHeatCapacity) {
+        return remainingTicks <= maxHeatCapacity;
+    }
+    public static int maxStoredTicks(int maxHeatCapacity) {
+        int originalLongestBucket = DEFAULTS.values().stream().mapToInt(FuelValues::bucketBurnTicks).max().orElse(0);
+        int configuredLongestBucket = DEFAULTS.entrySet().stream()
+                .filter(entry -> FuelConfig.fuelEnabled(entry.getKey()))
+                .mapToInt(entry -> FuelConfig.values(entry.getKey(), entry.getValue()).bucketBurnTicks())
+                .max().orElse(0);
+        return (int) Math.min((long) maxHeatCapacity + Math.max(originalLongestBucket, configuredLongestBucket), Integer.MAX_VALUE);
+    }
     public int addBucketTicks(int remainingTicks, boolean sameFuel) {
         return sameFuel ? (int) Math.min((long) Math.max(0, remainingTicks) + bucketBurnTicks(), Integer.MAX_VALUE) : bucketBurnTicks();
     }
