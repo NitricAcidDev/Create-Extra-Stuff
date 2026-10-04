@@ -1,10 +1,6 @@
 package com.nitricacid.traininteractive;
 
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import io.netty.buffer.Unpooled;
-import net.dadamalda.create_compatible_storage.mixin.ContraptionSpawnAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -29,22 +25,6 @@ public record ContraptionResyncRequest(int entityId) implements CustomPacketPayl
         var throttle = entity.getPersistentData();
         if (throttle.contains(key) && now - throttle.getLong(key) < 100) return;
         throttle.putLong(key, now);
-        var tag = new CompoundTag();
-        ((ContraptionSpawnAccess) entity).trainsInteractive$writeSpawn(tag, player.registryAccess(), true);
-        var buffer = new FriendlyByteBuf(Unpooled.buffer());
-        try {
-            buffer.writeNbt(tag);
-            int length = buffer.readableBytes();
-            if (length > ContraptionStructureChunk.MAX_BYTES) return;
-            byte[] data = new byte[length];
-            buffer.readBytes(data);
-            var transfer = java.util.UUID.randomUUID();
-            int total = (data.length + ContraptionStructureChunk.CHUNK_BYTES - 1) / ContraptionStructureChunk.CHUNK_BYTES;
-            for (int i = 0; i < total; i++) {
-                int from = i * ContraptionStructureChunk.CHUNK_BYTES;
-                PacketDistributor.sendToPlayer(player, new ContraptionStructureChunk(entity.getId(), entity.getUUID(), transfer, i, total,
-                        java.util.Arrays.copyOfRange(data, from, Math.min(data.length, from + ContraptionStructureChunk.CHUNK_BYTES))));
-            }
-        } finally { buffer.release(); }
+        TrainStructureSpawn.send(entity, false, payload -> PacketDistributor.sendToPlayer(player, payload));
     }
 }

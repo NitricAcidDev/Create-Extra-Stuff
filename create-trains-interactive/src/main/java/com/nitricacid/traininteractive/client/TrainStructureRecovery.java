@@ -22,6 +22,7 @@ import java.util.UUID;
 public final class TrainStructureRecovery {
     private record Pending(UUID transfer, byte[][] parts, long started) {}
     private static final Map<Integer, Pending> transfers = new HashMap<>();
+    private static final Map<Integer, Long> requests = new HashMap<>();
     private static net.minecraft.client.multiplayer.ClientLevel level;
     private static long ticks;
     private TrainStructureRecovery() {}
@@ -29,15 +30,20 @@ public final class TrainStructureRecovery {
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
         var client = Minecraft.getInstance();
-        if (level != client.level) { level = client.level; transfers.clear(); ticks = 0; }
+        if (level != client.level) { level = client.level; transfers.clear(); requests.clear(); ticks = 0; }
         if (level == null) return;
         long now = ++ticks;
         transfers.values().removeIf(p -> now - p.started > 200);
         for (var ref : ContraptionHandler.loadedContraptions.get(level).values()) {
             var entity = ref.get();
-            if (entity != null && entity.isAlive() && entity.getContraption() == null && (now + entity.getId()) % 100 == 20)
+            if (entity != null && entity.isAlive() && entity.getContraption() == null && !transfers.containsKey(entity.getId())
+                    && now - requests.getOrDefault(entity.getId(), now - 100) >= 100) {
+                requests.put(entity.getId(), now);
                 PacketDistributor.sendToServer(new ContraptionResyncRequest(entity.getId()));
+            }
         }
+        requests.keySet().removeIf(id -> !(level.getEntity(id) instanceof AbstractContraptionEntity entity)
+                || !entity.isAlive() || entity.getContraption() != null);
     }
 
     public static void receive(ContraptionStructureChunk packet) {
@@ -46,7 +52,7 @@ public final class TrainStructureRecovery {
                 || !entity.getUUID().equals(packet.entityUuid()) || entity.getContraption() != null) return;
         if (packet.count() < 1 || packet.count() > ContraptionStructureChunk.MAX_BYTES / ContraptionStructureChunk.CHUNK_BYTES
                 || packet.index() < 0 || packet.index() >= packet.count()) return;
-        if (level != client.level) { level = client.level; transfers.clear(); ticks = 0; }
+        if (level != client.level) { level = client.level; transfers.clear(); requests.clear(); ticks = 0; }
         var pending = transfers.get(packet.entityId());
         if (pending == null || !pending.transfer.equals(packet.transfer())) {
             pending = new Pending(packet.transfer(), new byte[packet.count()][], ticks);

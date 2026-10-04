@@ -4,7 +4,7 @@ A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, books
 
 ## Installation
 
-1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.3.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
+1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.4.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
 2. Install the same JAR on clients and dedicated servers.
 3. Restart Minecraft. When upgrading from versions before 1.1.0, reassemble existing trains to capture the new interaction handlers.
 
@@ -28,9 +28,9 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 | Minecraft Pick Block | Middle-click targets the nearest visible block on a contraption. Creative mode copies its native item; Ctrl + middle-click also copies block entity data. Survival selects a matching item already in your inventory. |
 | Other Compatible Storage integrations | Original optional storage support and tags are retained, including Handcrafted, Quark, Storage Delight and supported Let's Do storage. These additional integrations have not been individually tested in this fork. |
 
-Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Placement plays the native item sound for the placing player, and trapdoors open and close normally. Native placement of supported bar and food items can use adjacent cells on the contraption. A filled shaker pours into empty glassware or can be placed on a counter with its drink and ingredients intact. Its native ingredient overlay works on moving trains, and drink tooltips retain bottle quality and signature cocktail effects. With On the Move, release the attack button before mining another train block so removing one block cannot continue into the block underneath.
+Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Placement plays the native item sound for the placing player, and trapdoors open and close normally. If the train interaction or placement cannot act, held items use their normal right-click behavior, including books and food. Native placement of supported bar and food items can use adjacent cells on the contraption. A filled shaker pours into empty glassware or can be placed on a counter with its drink and ingredients intact. Its native ingredient overlay works on moving trains, and drink tooltips retain bottle quality and signature cocktail effects. With On the Move, release the attack button before mining another train block so removing one block cannot continue into the block underneath.
 
-Active ticking is limited to the listed bar and kitchen machines. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
+Oversized carriage structures are included in the initial spawn bundle instead of appearing after a delayed recovery request. Active ticking is limited to the listed bar and kitchen machines. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
 
 Moving beds show the normal daytime or nearby-monster message before entering sleep. With On the Move installed, editing allows portable bottles, glassware, drinks, shakers, cooking tools, feasts and vanilla cooking blocks by default; cabinets and furniture stay protected. In the server config, `allowPortableServiceBlocks` controls the portable items, `allowedTrainBlocks` adds block IDs or `namespace:*` entries, and `restrictTrainEditing` toggles the restriction. The optional warning, `showEditingWhitelistMessages`, is off by default. Exact old default lists upgrade automatically; customized lists are preserved. Existing blocks can still be used normally.
 
@@ -54,7 +54,7 @@ For the verification suite, supply copies of the installed Kaleidoscope Tavern, 
 
 To build the optional On the Move integration, place its 1.0.0 JAR in `dev-libs/on-the-move/`. Add Steam 'n' Rails 0.3.0-beta.2 there for the combined regression check and run `gradlew runGameTestServer -PwithOnTheMove`. These optional dependencies are not bundled in the release.
 
-Version 1.1.3 is checked with 30 server GameTests and an isolated client world. Checks cover bar/kitchen interactions, storage, seats, bookshelves, filled-shaker placement and pickup, bed messages, cabinet protection, optional warnings, placement sounds, trapdoors, missing carriage recovery, overlays and mining protection. Run `gradlew runClient -PwithOnTheMove -PverifyInspector=true -PverifyGameplay=true` for the client checks. Full Sable/shader modpacks and multiplayer visuals still need manual testing.
+Version 1.1.4 is checked with 31 server GameTests and an isolated client world. Checks cover bar/kitchen interactions, storage, seats, bookshelves, filled-shaker placement and pickup, bed messages, cabinet protection, optional warnings, placement sounds, trapdoors, complete oversized spawns, held-item fallback, overlays and mining protection. Run `gradlew runClient -PwithOnTheMove -PverifyInspector=true -PverifyGameplay=true` for the client checks. Full Sable/shader modpacks and multiplayer visuals still need manual testing.
 
 ## Provenance and license
 

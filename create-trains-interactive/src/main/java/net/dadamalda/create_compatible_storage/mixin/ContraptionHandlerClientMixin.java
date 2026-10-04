@@ -13,6 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ContraptionHandlerClient.class)
 public class ContraptionHandlerClientMixin {
+    @com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation(method = "rightClickingOnContraptionsGetsHandledLocally",
+            at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/ContraptionHandlerClient;handleSpecialInteractions(Lcom/simibubi/create/content/contraptions/AbstractContraptionEntity;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/InteractionHand;)Z"), remap = false)
+    private static boolean trainsInteractive$useHandAfterMiss(com.simibubi.create.content.contraptions.AbstractContraptionEntity entity,
+            net.minecraft.world.entity.player.Player player, net.minecraft.core.BlockPos pos, net.minecraft.core.Direction face,
+            net.minecraft.world.InteractionHand hand, com.llamalad7.mixinextras.injector.wrapoperation.Operation<Boolean> original) {
+        if (original.call(entity, player, pos, face, hand)) return true;
+        var client = net.minecraft.client.Minecraft.getInstance();
+        return client.gameMode != null && !player.getItemInHand(hand).isEmpty()
+                && client.gameMode.useItem(client.player, hand).consumesAction();
+    }
     @Inject(method = "rayTraceContraption", at = @At("HEAD"), cancellable = true, remap = false)
     private static void trainsInteractive$waitForSync(Vec3 origin, Vec3 target,
             com.simibubi.create.content.contraptions.AbstractContraptionEntity entity,

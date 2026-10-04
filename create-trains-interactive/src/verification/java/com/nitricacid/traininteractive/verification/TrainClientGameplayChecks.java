@@ -35,13 +35,12 @@ public final class TrainClientGameplayChecks {
     private static int stage;
     private static int ticks;
     private static volatile int entityId = -1;
-    private static boolean sawMissingStructure;
     @SubscribeEvent
     public static void check(ClientTickEvent.Post event) throws Exception {
         if (!Boolean.getBoolean("create_trains_interactive.verifyGameplay")) return;
         var client = Minecraft.getInstance();
         client.options.pauseOnLostFocus = false;
-        if (stage >= 2 && client.screen != null) client.setScreen(null);
+        if ((stage == 2 || stage == 3) && client.screen != null) client.setScreen(null);
         if (ticks % 100 == 0) org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Gameplay check stage {} entity {} screen {}", stage, entityId, client.screen);
         if (++ticks > 2400) throw new AssertionError("Timed out verifying oversized train recovery");
         if (stage == 0) {
@@ -65,6 +64,8 @@ public final class TrainClientGameplayChecks {
                 c.getStorage().initialize();
                 var entity = OrientedContraptionEntity.create(level, c, Direction.SOUTH);
                 var player = server.getPlayerList().getPlayers().getFirst();
+                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.WRITABLE_BOOK));
+                player.containerMenu.broadcastChanges();
                 entity.setPos(player.getX(), player.getY() + 2, player.getZ());
                 var be = new ShakerBlockEntity(BlockPos.ZERO, ModBlocks.SHAKER.get().defaultBlockState());
                 be.setLevel(level);
@@ -77,8 +78,7 @@ public final class TrainClientGameplayChecks {
                 entityId = entity.getId();
             });
         } else if (stage == 2 && entityId != -1 && client.level.getEntity(entityId) instanceof OrientedContraptionEntity entity) {
-            if (entity.getContraption() == null) { sawMissingStructure = true; return; }
-            if (!sawMissingStructure) throw new AssertionError("Regression fixture did not reproduce Create's oversized null spawn");
+            if (entity.getContraption() == null) throw new AssertionError("An oversized contraption must have its complete structure on the first client tick after spawning");
             stage = 3;
             var center = entity.toGlobalVector(new Vec3(.5, .3, .5), 1);
             var eye = entity.toGlobalVector(new Vec3(.5, .3, 2.5), 1);
@@ -88,10 +88,26 @@ public final class TrainClientGameplayChecks {
             client.player.setXRot(0);
             client.player.yRotO = client.player.getYRot(); client.player.xRotO = 0;
         } else if (stage == 3) {
+            if (TrainRayTrace.find(client) == null) return;
+            TrainHandUseClientChecks.start(client);
+            stage = 4;
+        } else if (stage == 4) {
+            if (TrainHandUseClientChecks.done(client)) {
+                var entity = (OrientedContraptionEntity) client.level.getEntity(entityId);
+                var eye = entity.toGlobalVector(new Vec3(.5, .3, 2.5), 1);
+                // This synthetic train has no floor under the viewer; restore
+                // the overlay camera after the GUI test's extra physics ticks.
+                client.player.setPos(eye.x, eye.y - client.player.getEyeHeight(), eye.z);
+                client.player.setDeltaMovement(Vec3.ZERO);
+                stage = 5;
+            }
+        } else if (stage == 5) {
             var target = TrainRayTrace.find(client);
             if (target == null || target.entity().getId() != entityId) return;
             var world = ((TrainWorldAccess) target.entity()).trainsInteractive$world();
             var be = (ShakerBlockEntity) world.blockEntity(target.hit().getBlockPos());
+            if (be == null) throw new AssertionError("Overlay fixture must still target the shaker after book use; hit=" + target.hit().getBlockPos() + " state=" + world.state(target.hit().getBlockPos())
+                    + " shaker=" + world.state(BlockPos.ZERO) + " eye=" + client.player.getEyePosition() + " look=" + client.player.getLookAngle());
             if (!be.getStorage().getStackInSlot(0).is(Items.APPLE)) throw new AssertionError("Recovered shaker lost its ingredient");
             var previous = client.hitResult;
             var graphics = new net.minecraft.client.gui.GuiGraphics(client, client.renderBuffers().bufferSource());
@@ -135,8 +151,8 @@ public final class TrainClientGameplayChecks {
             com.nitricacid.traininteractive.client.TrainDrinkOverlay.render(new net.neoforged.neoforge.client.event.RenderGuiEvent.Post(graphics, client.getTimer()));
             graphics.flush();
             org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Moving drink tooltip effects, colour and bottle quality checks passed");
-            org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Oversized train recovered; moving shaker raycast, inventory and native overlay checks passed");
-            stage = 4;
+            org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Oversized train spawned complete on its first client tick; moving shaker raycast, inventory and native overlay checks passed");
+            stage = 6;
             client.stop();
         }
     }

@@ -4,6 +4,8 @@
   "package": "net.dadamalda.create_compatible_storage.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ContraptionHandUseMixin",
+    "ContraptionSpawnBundleMixin",
     "OnTheMovePlacementMixin",
     "OnTheMoveBreakingMixin",
     "OnTheMoveBedMixin",
