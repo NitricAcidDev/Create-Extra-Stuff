@@ -4,6 +4,8 @@
   "package": "net.dadamalda.create_compatible_storage.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ContraptionSpawnAccess",
+    "TavernShakerItemMixin",
     "ChiseledBookshelfAccess",
     "NativeTrainLevelMixin",
     "NativeTrainEntityMixin",
@@ -33,6 +35,10 @@
   ],
   "server": [],
   "client": [
+    "OnTheMoveMiningMixin",
+    "TavernShakerOverlayMixin",
+    "ContraptionVisualRecoveryMixin",
+    "CarriageVisualRecoveryMixin",
     "MovingCookingPotMenuMixin",
     "TrainPickBlockMixin",
     "BookshelfInspectorMixin",

@@ -33,6 +33,6 @@ public final class InspectorClientChecks {
                 || !BookshelfInspectorClient.currentBookData.itemStack.isEmpty())
             throw new AssertionError("Empty slots must hide the Inspector overlay");
         org.slf4j.LoggerFactory.getLogger(InspectorClientChecks.class).info("Bookshelf Inspector client compatibility checks passed");
-        client.stop();
+        if (!Boolean.getBoolean("create_trains_interactive.verifyGameplay")) client.stop();
     }
 }

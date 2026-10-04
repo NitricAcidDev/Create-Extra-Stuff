@@ -13,6 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ContraptionHandlerClient.class)
 public class ContraptionHandlerClientMixin {
+    @Inject(method = "rayTraceContraption", at = @At("HEAD"), cancellable = true, remap = false)
+    private static void trainsInteractive$waitForSync(Vec3 origin, Vec3 target,
+            com.simibubi.create.content.contraptions.AbstractContraptionEntity entity,
+            org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<BlockHitResult> cir) {
+        if (entity.getContraption() == null) cir.setReturnValue(null);
+    }
     @Inject(method = "rightClickingOnContraptionsGetsHandledLocally",
             at = @At(value = "INVOKE",
                     target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V",

@@ -339,6 +339,28 @@ public final class TrainServiceTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void filledShakerCannotPlaceOnTrainOrStationaryCounter(GameTestHelper helper) throws Exception {
+        var train = assemble(helper, state("kaleidoscope_tavern:empty_glassware"));
+        var world = ((TrainWorldAccess) train).trainsInteractive$world();
+        var player = new MenuPlayer(helper.getLevel());
+        var shaker = new ItemStack(item("kaleidoscope_tavern:shaker"));
+        ShakerItem.setResult(shaker, new ItemStack(item("kaleidoscope_tavern:signature_cocktail")));
+        player.setItemInHand(InteractionHand.MAIN_HAND, shaker);
+        var hit = new BlockHitResult(new Vec3(.5, 0, .5), Direction.UP, BlockPos.ZERO.below(), false);
+        world.run(hit.getBlockPos(), () -> NativeServiceInteraction.interact(player, InteractionHand.MAIN_HAND, hit, world));
+        helper.assertTrue(world.state(BlockPos.ZERO).getBlock() == state("kaleidoscope_tavern:empty_glassware").getBlock(), "Failed pours must not replace glassware or place a shaker");
+        helper.assertTrue(ShakerItem.hasResult(shaker) && shaker.getCount() == 1, "Failed pours preserve the drink and shaker");
+        var counter = helper.absolutePos(POS.below());
+        helper.getLevel().setBlockAndUpdate(counter, Blocks.STONE.defaultBlockState());
+        var empty = counter.above();
+        helper.getLevel().setBlockAndUpdate(empty, Blocks.AIR.defaultBlockState());
+        var stationaryHit = new BlockHitResult(Vec3.atCenterOf(counter), Direction.UP, counter, false);
+        shaker.getItem().useOn(new net.minecraft.world.item.context.UseOnContext(helper.getLevel(), player, InteractionHand.MAIN_HAND, shaker, stationaryHit));
+        helper.assertTrue(helper.getLevel().getBlockState(empty).isAir() && ShakerItem.hasResult(shaker), "Stationary fallback placement must also be blocked");
+        helper.succeed();
+    }
+
     private static OrientedContraptionEntity assemble(GameTestHelper helper, BlockState state) throws Exception {
         helper.setBlock(POS.below(), Blocks.STONE);
         helper.setBlock(POS, state);

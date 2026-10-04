@@ -4,9 +4,9 @@ A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, books
 
 ## Installation
 
-1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.0.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
+1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.1.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
 2. Install the same JAR on clients and dedicated servers.
-3. Reassemble existing trains and contraptions to capture the new inventories, seats and interaction handlers.
+3. Restart Minecraft. When upgrading from versions before 1.1.0, reassemble existing trains to capture the new interaction handlers.
 
 This build is a replacement for Create: Compatible Storage: do not install both. If migrating from Compatible Storage, disassemble contraptions that use its storage before replacing it; the fork deliberately uses its own registry namespace.
 
@@ -28,7 +28,7 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 | Minecraft Pick Block | Middle-click targets the nearest visible block on a contraption. Creative mode copies its native item; Ctrl + middle-click also copies block entity data. Survival selects a matching item already in your inventory. |
 | Other Compatible Storage integrations | Original optional storage support and tags are retained, including Handcrafted, Quark, Storage Delight and supported Let's Do storage. These additional integrations have not been individually tested in this fork. |
 
-Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Native placement of supported bar and food items can use adjacent cells on the contraption.
+Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Native placement of supported bar and food items can use adjacent cells on the contraption. A shaker containing a prepared drink pours into empty glassware; clicking another block keeps the shaker in hand. Its native ingredient overlay works on moving trains, and drink tooltips retain bottle quality and signature cocktail effects. With On the Move, release the attack button before mining another train block so removing one block cannot continue into the block underneath.
 
 Active ticking is limited to the listed bar and kitchen machines. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
 
@@ -50,7 +50,7 @@ Use Java 21 and the included Gradle wrapper. `gradlew build` builds the release 
 
 For the verification suite, supply copies of the installed Kaleidoscope Tavern, World Liquor, Farmer's Delight, Farmer's Delight Extended, Create Gears and Tavern, and Kotlin for Forge JARs in `dev-libs/`. The Bookshelf Inspector NeoForge 2.4+1.21.1 JAR is also needed in `dev-libs/` to compile its optional HUD integration; add Cloth Config for client verification. Run `gradlew runClient -PverifyInspector=true` to check the client hooks and HUD data handoff. These third-party JARs are not included in the released mod or source archive. Create/Ponder/Flywheel/Registrate and optional compile-time integrations are resolved from their public Maven repositories.
 
-To reproduce the On the Move startup conflict check, place its 1.0.0 JAR and Steam 'n' Rails 0.3.0-beta.2 JAR in `dev-libs/on-the-move/` and run `gradlew runGameTestServer -PwithOnTheMove`. These optional dependencies are not bundled in the release.
+To build the optional On the Move integration, place its 1.0.0 JAR in `dev-libs/on-the-move/`. Add Steam 'n' Rails 0.3.0-beta.2 there for the combined regression check and run `gradlew runGameTestServer -PwithOnTheMove`. These optional dependencies are not bundled in the release.
 
 Checks cover mounted inventory changes and menu slot counts, world reload/disassembly, all 48 seat colours, native sitting heights, native bottle restrictions and slot interactions, and preservation of World Liquor's existing cabinet handlers. Checks also cover chiseled bookshelf slots in all four facing directions, book restrictions, item components and save/reload/disassembly. Tests run in a separate test world; the Inspector integration also checks initial and late tracking, names, enchantments, authors and live book removal. Client rendering and multiplayer visuals have not been manually tested.
 
@@ -65,3 +65,5 @@ New furniture code implements the same kind of contraption-seat integration desc
 New integration code was written for this project. Kaleidoscope and World Liquor implementation details were inspected to integrate with their installed versions; their JARs, assets and decompiled source are not redistributed here. There is no dependency on the separate **Create: Interactive** mod.
 
 This fork is distributed under GPL-3.0-only. The full license is in `LICENSE.md`, and the source archive contains the corresponding source and build scripts.
+
+Version 1.1.1 passes all 26 server GameTests, including failed-pour preservation on train and stationary counters. `gradlew runClient -PwithOnTheMove -PverifyInspector=true -PverifyGameplay=true` creates a separate test world and reproduces an oversized, missing Create spawn structure. Checks cover recovery in five packets, native delayed carriage model rebuilding, refreshed bogey references, moving shaker ingredients, scope cleanup, mining target/release handling and native drink tooltip effects, colour and bottle quality. Missing structures up to 16 MiB are recovered in 256 KiB packets; clients wait for recovery rather than discarding the carriage or raycasting its missing blocks. This has not been tested with the full Sable/shader modpack or in multiplayer.

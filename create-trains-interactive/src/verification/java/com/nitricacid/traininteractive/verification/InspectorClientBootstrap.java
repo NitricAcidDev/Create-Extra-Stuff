@@ -22,7 +22,7 @@ public final class InspectorClientBootstrap {
             InspectorClientChecks.check(event);
         } else {
             org.slf4j.LoggerFactory.getLogger(InspectorClientBootstrap.class).info("Optional Bookshelf Inspector absence check passed");
-            Minecraft.getInstance().stop();
+            if (!Boolean.getBoolean("create_trains_interactive.verifyGameplay")) Minecraft.getInstance().stop();
         }
     }
 }

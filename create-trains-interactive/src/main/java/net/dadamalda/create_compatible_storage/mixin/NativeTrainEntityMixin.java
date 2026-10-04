@@ -20,6 +20,13 @@ public abstract class NativeTrainEntityMixin implements TrainWorldAccess {
         return trainsInteractive$world;
     }
 
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void trainsInteractive$awaitClientStructure(CallbackInfo ci) {
+        var entity = (AbstractContraptionEntity) (Object) this;
+        // Create otherwise discards the client entity before a replacement structure can arrive.
+        if (entity.level().isClientSide && entity.getContraption() == null) ci.cancel();
+    }
+
     @Inject(method = "tick", at = @At("RETURN"))
     private void trainsInteractive$tickServiceBlocks(CallbackInfo ci) {
         var entity = (AbstractContraptionEntity) (Object) this;
