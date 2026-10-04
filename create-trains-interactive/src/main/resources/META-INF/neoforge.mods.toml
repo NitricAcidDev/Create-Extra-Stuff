@@ -53,3 +53,17 @@ type = "incompatible"
 reason = "Create: Trains Interactive includes its own fork of Compatible Storage."
 versionRange = "[0,)"
 side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "railways"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "createonthemove"
+type = "optional"
+versionRange = "[1.0.0,)"
+ordering = "BEFORE"
+side = "BOTH"

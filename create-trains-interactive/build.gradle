@@ -65,6 +65,8 @@ dependencies {
         if (project.hasProperty('withoutInspector')) exclude 'bookshelfinspector-*.jar'
     }
     verificationImplementation sourceSets.main.output
+    if (project.hasProperty('withOnTheMove'))
+        runtimeOnly fileTree('dev-libs/on-the-move') { include '*.jar' }
 }
 
 tasks.named('processResources', ProcessResources) {

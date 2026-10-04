@@ -37,6 +37,48 @@ public final class TrainCompatibilityTests {
     private static final BlockPos BLOCK = new BlockPos(1, 2, 1);
 
     @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void onTheMoveCoexistsWithRailwaysAndBookshelves(GameTestHelper helper) {
+        if (net.neoforged.fml.ModList.get().isLoaded("createonthemove")) {
+            var registry = MovingInteractionBehaviour.REGISTRY;
+            helper.assertTrue(registry.get(net.minecraft.world.level.block.Blocks.CHISELED_BOOKSHELF)
+                    instanceof com.nitricacid.traininteractive.ChiseledBookshelfInteraction,
+                    "On the Move must preserve bookshelf interactions and Inspector synchronization");
+            helper.assertTrue(registry.get(net.minecraft.world.level.block.Blocks.FURNACE).getClass().getName()
+                    .equals("net.woudlee.createonthemove.interaction.FurnaceInteractionBehaviour"),
+                    "The universal provider must not suppress On the Move's specialized furnace handler");
+            helper.assertTrue(registry.get(net.minecraft.world.level.block.Blocks.ANVIL).getClass().getName()
+                    .equals("net.woudlee.createonthemove.interaction.AnvilInteractionBehaviour"),
+                    "Unclaimed workstations must retain On the Move interactions");
+            if (net.neoforged.fml.ModList.get().isLoaded("railways")) {
+                for (var block : java.util.List.of(net.minecraft.world.level.block.Blocks.CRAFTING_TABLE,
+                        net.minecraft.world.level.block.Blocks.STONECUTTER,
+                        net.minecraft.world.level.block.Blocks.CARTOGRAPHY_TABLE,
+                        net.minecraft.world.level.block.Blocks.LOOM)) {
+                    helper.assertTrue(registry.get(block).getClass().getName().startsWith("com.railwayteam.railways."),
+                            "Steam 'n' Rails must retain its existing workstation handler: " + block);
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void onTheMoveGuardPreservesExplicitHandlersWithoutSuppressingProviders(GameTestHelper helper) {
+        var registry = com.simibubi.create.api.registry.SimpleRegistry.<Object, Object>create();
+        Object existingKey = new Object(), freshKey = new Object();
+        Object existing = new Object(), universal = new Object(), specialized = new Object();
+        registry.register(existingKey, existing);
+        registry.registerProvider(key -> universal);
+        // Prime provider resolution before installing the more specific direct registration.
+        helper.assertTrue(registry.get(freshKey) == universal, "Provider must resolve before registration");
+        com.nitricacid.traininteractive.OnTheMoveCompat.registerIfUnclaimed(registry, existingKey, specialized);
+        com.nitricacid.traininteractive.OnTheMoveCompat.registerIfUnclaimed(registry, freshKey, specialized);
+        helper.assertTrue(registry.get(existingKey) == existing, "Existing explicit handler must remain unchanged");
+        helper.assertTrue(registry.get(freshKey) == specialized, "Specialized handler must override provider fallback");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
     public static void farmersCabinetSurvivesMountedInventoryChanges(GameTestHelper helper) throws Exception {
         roundTripInventory(helper, "farmersdelight:oak_cabinet");
         helper.succeed();

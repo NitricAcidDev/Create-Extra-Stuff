@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ChiseledBookshelfAccess",
+    "SimpleRegistryAccess",
+    "OnTheMoveInteractionsMixin",
+    "OnTheMoveStorageMixin",
     "BookshelfSyncMixin",
     "ChuteBlockEntityMixin",
     "CounterBlockMixin",
