@@ -22,4 +22,6 @@ GitHub is combined with my [Create: Creative Tools Fabrication](https://modrinth
 
 Supports Kaleidoscope Tavern, World Liquor and Farmer's Delight, including Pick Block on moving trains.
 
+Requires Create 6.0.10 on NeoForge 1.21.1. [Create: On the Move](https://www.curseforge.com/minecraft/mc-mods/create-on-the-move) is the dependency for placing and breaking blocks on moving trains.
+
 [Read more](create-trains-interactive/README.md)

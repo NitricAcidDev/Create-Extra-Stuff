@@ -1,0 +1,7 @@
+# Server-side rules for placing and breaking blocks on Create contraptions.
+# Active when Create: On the Move is installed. Includes creative players.
+# Normal use of existing blocks is unaffected.
+restrictTrainEditing = true
+
+# Exact block IDs or namespace:* entries. Empty means no editing while enabled.
+allowedTrainBlocks = ["kaleidoscope_tavern:*", "kaleidoscope_world_liquor:*", "farmersdelight:*", "minecraft:furnace", "minecraft:smoker", "minecraft:campfire", "minecraft:soul_campfire"]

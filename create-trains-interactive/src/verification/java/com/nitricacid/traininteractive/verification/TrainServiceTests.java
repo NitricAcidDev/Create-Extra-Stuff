@@ -340,24 +340,42 @@ public final class TrainServiceTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
-    public static void filledShakerCannotPlaceOnTrainOrStationaryCounter(GameTestHelper helper) throws Exception {
+    public static void filledShakerPlacesAndKeepsDrinkOnTrainAndStationaryCounter(GameTestHelper helper) throws Exception {
         var train = assemble(helper, state("kaleidoscope_tavern:empty_glassware"));
         var world = ((TrainWorldAccess) train).trainsInteractive$world();
         var player = new MenuPlayer(helper.getLevel());
         var shaker = new ItemStack(item("kaleidoscope_tavern:shaker"));
+        var ingredients = new net.neoforged.neoforge.items.ItemStackHandler(3);
+        ingredients.setStackInSlot(0, new ItemStack(Items.APPLE));
+        ShakerItem.setStorage(shaker, ingredients);
         ShakerItem.setResult(shaker, new ItemStack(item("kaleidoscope_tavern:signature_cocktail")));
+        var stationaryShaker = shaker.copy();
         player.setItemInHand(InteractionHand.MAIN_HAND, shaker);
+        aim(player, train, BlockPos.ZERO);
+        world.set(BlockPos.ZERO.below(), Blocks.STONE.defaultBlockState());
+        world.set(BlockPos.ZERO, Blocks.AIR.defaultBlockState());
         var hit = new BlockHitResult(new Vec3(.5, 0, .5), Direction.UP, BlockPos.ZERO.below(), false);
-        world.run(hit.getBlockPos(), () -> NativeServiceInteraction.interact(player, InteractionHand.MAIN_HAND, hit, world));
-        helper.assertTrue(world.state(BlockPos.ZERO).getBlock() == state("kaleidoscope_tavern:empty_glassware").getBlock(), "Failed pours must not replace glassware or place a shaker");
-        helper.assertTrue(ShakerItem.hasResult(shaker) && shaker.getCount() == 1, "Failed pours preserve the drink and shaker");
+        helper.assertTrue(world.run(hit.getBlockPos(), () -> NativeServiceInteraction.interact(player, InteractionHand.MAIN_HAND, hit, world)), "Filled shakers must place on train counters");
+        helper.assertTrue(world.state(BlockPos.ZERO).getBlock() == state("kaleidoscope_tavern:shaker").getBlock(), "The filled shaker must become a train block");
+        var placed = (ShakerBlockEntity) world.blockEntity(BlockPos.ZERO);
+        helper.assertTrue(placed.getResult().is(item("kaleidoscope_tavern:signature_cocktail")) && placed.getStorage().getStackInSlot(0).is(Items.APPLE), "Train placement must preserve the prepared drink and ingredients");
+        helper.assertTrue(shaker.isEmpty(), "Survival placement must consume the held shaker");
+        world.flush(false);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        aim(player, train, BlockPos.ZERO);
+        helper.assertTrue(train.handlePlayerInteraction(player, BlockPos.ZERO, Direction.SOUTH, InteractionHand.MAIN_HAND), "Placed shakers must be retrievable from trains");
+        var retrieved = find(player, item("kaleidoscope_tavern:shaker"));
+        helper.assertTrue(ShakerItem.hasResult(retrieved) && ShakerItem.getStorage(retrieved).getStackInSlot(0).is(Items.APPLE), "Pickup must retain the placed drink and ingredients");
         var counter = helper.absolutePos(POS.below());
         helper.getLevel().setBlockAndUpdate(counter, Blocks.STONE.defaultBlockState());
         var empty = counter.above();
         helper.getLevel().setBlockAndUpdate(empty, Blocks.AIR.defaultBlockState());
+        player.setItemInHand(InteractionHand.MAIN_HAND, stationaryShaker);
         var stationaryHit = new BlockHitResult(Vec3.atCenterOf(counter), Direction.UP, counter, false);
-        shaker.getItem().useOn(new net.minecraft.world.item.context.UseOnContext(helper.getLevel(), player, InteractionHand.MAIN_HAND, shaker, stationaryHit));
-        helper.assertTrue(helper.getLevel().getBlockState(empty).isAir() && ShakerItem.hasResult(shaker), "Stationary fallback placement must also be blocked");
+        stationaryShaker.getItem().useOn(new net.minecraft.world.item.context.UseOnContext(helper.getLevel(), player, InteractionHand.MAIN_HAND, stationaryShaker, stationaryHit));
+        helper.assertTrue(helper.getLevel().getBlockState(empty).getBlock() == state("kaleidoscope_tavern:shaker").getBlock(), "Filled shakers must also place on stationary counters");
+        var stationary = (ShakerBlockEntity) helper.getLevel().getBlockEntity(empty);
+        helper.assertTrue(stationary.getResult().is(item("kaleidoscope_tavern:signature_cocktail")) && stationary.getStorage().getStackInSlot(0).is(Items.APPLE), "Stationary placement must preserve the drink and ingredients");
         helper.succeed();
     }
 

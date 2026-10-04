@@ -4,8 +4,11 @@
   "package": "net.dadamalda.create_compatible_storage.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "OnTheMovePlacementMixin",
+    "OnTheMoveBreakingMixin",
+    "OnTheMoveBedMixin",
+    "MovingBedSleepMixin",
     "ContraptionSpawnAccess",
-    "TavernShakerItemMixin",
     "ChiseledBookshelfAccess",
     "NativeTrainLevelMixin",
     "NativeTrainEntityMixin",

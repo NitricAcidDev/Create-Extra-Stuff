@@ -41,7 +41,10 @@ public final class NativeServiceInteraction extends MovingInteractionBehaviour {
         if (itemResult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 && state.useWithoutItem(world.entity.level(), player, hit).consumesAction()) return true;
         if (held.isEmpty()) return false;
-        if (held.getItem() instanceof net.minecraft.world.item.BlockItem blockItem && !canPlace(blockItem.getBlock())) return false;
+        if (held.getItem() instanceof net.minecraft.world.item.BlockItem blockItem) {
+            if (!canPlace(blockItem.getBlock())) return false;
+            if (!TrainEditingConfig.allows(blockItem.getBlock())) { TrainEditingConfig.rejected(player); return false; }
+        }
         // Shaker pouring, bottle stacking and placing prepared food are item actions.
         var look = world.entity.reverseRotation(player.getLookAngle(), 1);
         UseOnContext context = new UseOnContext(world.entity.level(), player, hand, held, hit) {
@@ -51,7 +54,7 @@ public final class NativeServiceInteraction extends MovingInteractionBehaviour {
         return held.getItem().useOn(context).consumesAction();
     }
 
-    private static boolean canPlace(net.minecraft.world.level.block.Block block) {
+    public static boolean canPlace(net.minecraft.world.level.block.Block block) {
         var id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block);
         if (id.getNamespace().equals("farmersdelight") && java.util.Set.of("cooking_pot", "stove", "skillet", "cutting_board").contains(id.getPath())) return true;
         for (Class<?> type = block.getClass(); type != null; type = type.getSuperclass()) {
