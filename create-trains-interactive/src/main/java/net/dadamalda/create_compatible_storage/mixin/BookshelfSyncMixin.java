@@ -23,7 +23,8 @@ public abstract class BookshelfSyncMixin {
         // Vanilla's update tag omits books. Include them when a contraption is sent to a client,
         // including when an existing train is loaded or a player starts tracking it later.
         for (var info : blocks.values()) {
-            if (info.state().is(Blocks.CHISELED_BOOKSHELF) && info.nbt() != null)
+            if ((info.state().is(Blocks.CHISELED_BOOKSHELF)
+                    || com.nitricacid.traininteractive.MovingTrainWorld.isServiceBlock(info.state())) && info.nbt() != null)
                 updateTags.put(info.pos(), info.nbt().copy());
         }
     }

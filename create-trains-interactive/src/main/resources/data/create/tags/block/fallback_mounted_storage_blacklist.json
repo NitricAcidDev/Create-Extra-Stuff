@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "kaleidoscope_tavern:shaker", "required": false },
+    { "id": "kaleidoscope_tavern:barrel", "required": false },
+    { "id": "kaleidoscope_tavern:pressing_tub", "required": false },
+    { "id": "kaleidoscope_world_liquor:freezer", "required": false },
+    { "id": "farmersdelight:cooking_pot", "required": false },
+    { "id": "farmersdelight:cutting_board", "required": false },
+    { "id": "farmersdelight:skillet", "required": false },
+    { "id": "farmersdelight:stove", "required": false }
+  ]
+}

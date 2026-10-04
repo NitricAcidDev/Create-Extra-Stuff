@@ -18,8 +18,8 @@ GitHub is combined with my [Create: Creative Tools Fabrication](https://modrinth
 
 # Create: Trains Interactive
 
-### Lets you use modded storage, chairs and chiseled bookshelves on Create trains
+### Lets you use storage, furniture, bar and kitchen blocks on Create trains
 
-Supports Kaleidoscope Tavern, World Liquor and Farmer's Delight.
+Supports Kaleidoscope Tavern, World Liquor and Farmer's Delight, including Pick Block on moving trains.
 
 [Read more](create-trains-interactive/README.md)

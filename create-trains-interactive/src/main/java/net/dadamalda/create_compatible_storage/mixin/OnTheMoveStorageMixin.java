@@ -18,6 +18,8 @@ public abstract class OnTheMoveStorageMixin {
             CallbackInfoReturnable<MovingInteractionBehaviour> cir) {
         // Create opens menus against the mounted inventory. A generic native menu
         // instead points at the stationary block and closes as the train moves.
-        if (MountedItemStorageType.REGISTRY.get(block) != null) cir.setReturnValue(null);
+        var type = MountedItemStorageType.REGISTRY.get(block);
+        // Create's fallback type is returned even for blocks with no inventory.
+        if (type != null && type != com.simibubi.create.AllMountedStorageTypes.FALLBACK.get()) cir.setReturnValue(null);
     }
 }

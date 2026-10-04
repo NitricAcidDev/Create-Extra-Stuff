@@ -15,6 +15,9 @@ public final class InspectorClientBootstrap {
     public static void verify(ClientTickEvent.Post event) throws Exception {
         if (finished || !Boolean.getBoolean("create_trains_interactive.verifyInspector")) return;
         finished = true;
+        Class.forName("vectorwing.farmersdelight.common.block.entity.container.CookingPotMenu");
+        if (com.nitricacid.traininteractive.client.TrainPickBlock.pick(Minecraft.getInstance()))
+            throw new AssertionError("Pick Block must safely ignore a client without a world");
         if (ModList.get().isLoaded("bookshelfinspector")) {
             InspectorClientChecks.check(event);
         } else {

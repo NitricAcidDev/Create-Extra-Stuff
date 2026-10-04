@@ -59,6 +59,7 @@ dependencies {
     compileOnly 'maven.modrinth:iron-shulker-boxes:1.21-neoforge-7.0.1'
     compileOnly 'maven.modrinth:create-storage-neo-forge:1.1.4-neoforge'
     compileOnly fileTree('dev-libs') { include 'kaleidoscopetavern-*.jar' }
+    compileOnly fileTree('dev-libs') { include 'FarmersDelight-*.jar' }
     compileOnly fileTree('dev-libs') { include 'bookshelfinspector-neoforge-2.4+1.21.1.jar' }
     runtimeOnly fileTree('dev-libs') {
         include '*.jar'

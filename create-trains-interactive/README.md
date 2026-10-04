@@ -1,10 +1,10 @@
 # Create: Trains Interactive
 
-A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, chiseled bookshelves and Kaleidoscope Tavern interactions. Requires **Create 6.0.10**.
+A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, bookshelves, bar and kitchen interactions, and Pick Block on moving trains. Requires **Create 6.0.10**.
 
 ## Installation
 
-1. Close Minecraft and put `create-trains-interactive-1.21.1-1.0.3.jar` in the profile's `mods` folder.
+1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.0.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
 2. Install the same JAR on clients and dedicated servers.
 3. Reassemble existing trains and contraptions to capture the new inventories, seats and interaction handlers.
 
@@ -17,14 +17,20 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 | Kaleidoscope Tavern 1.2.0 | All 16 sofas and 16 bar stools are moving seats, with native sitting height and passenger transfer during assembly. |
 | Kaleidoscope Tavern 1.2.0 | Bar cabinet and glass bar cabinet allow inserting and retrieving bottles, using the original bottle rules and left/right placement. |
 | Kaleidoscope Tavern 1.2.0 | Cellar cabinet, holder, circular rack and tilted rack allow placing/retrieving bottles in the clicked slot; original bottle restrictions and one-bottle limits apply. |
+| Kaleidoscope Tavern 1.2.0 | Add ingredients to shakers, pick them up with an empty hand, shake them normally in hand, pour into moving glassware and collect prepared drinks. Native quality restrictions, ingredients, drink colour and effects are retained. Glassware holders use their original four slots. Taps retain delayed extraction across save/reload. Brewing barrels assemble as a complete multiblock and continue their native brewing checks. |
 | Kaleidoscope World Liquor 1.1.9 fix | All 16 chairs/stools are captured as persistent seats. Native chair height takes precedence over the installed version's existing seat-position handler. Its ten existing cabinet interaction handlers remain in place. |
+| Kaleidoscope World Liquor 1.1.9 fix | Freezers keep native filling, opening/closing, processing and result extraction. Processing progress survives train reload. Its other unclaimed bar blocks receive native block and held-item interactions. |
 | Minecraft chiseled bookshelves | Insert and retrieve books from the clicked front slot. Books, occupied-slot visuals and the last clicked slot persist through save/reload and disassembly. |
 | Bookshelf Inspector 2.4 (NeoForge 1.21.1) | Its existing HUD shows the selected book's name, enchantments and author on moving chiseled bookshelves. Empty slots hide the overlay; stationary shelves keep their normal behavior. Install Bookshelf Inspector on clients and servers to enable its HUD. |
 | Create: On the Move 1.0.0 and Steam 'n' Rails 0.3.0-beta.2 | Prevents duplicate interaction registrations during startup. Existing workstation and bookshelf handlers remain in place; mounted storage retains Create's inventory menus. On the Move still supplies its handlers for unclaimed blocks. On the Move requires NeoForge 21.1.250 or newer. |
 | Farmer's Delight 1.3.4 | Cabinets and wooden/bamboo baskets can be opened on contraptions; their inventories participate in Create storage, survive save/reload and restore changed contents on disassembly. Baskets use a five-slot menu. |
+| Farmer's Delight 1.3.4 | Cooking pots use their native inventory menu, cook above onboard heat sources and serve meals into bowls. Menus follow the train and close when the passenger leaves range. Stoves and skillets continue native cooking ticks; cutting boards use native recipes and tool wear, and feasts serve food portions. Supported food blocks attach to their floor during assembly. |
+| Minecraft Pick Block | Middle-click targets the nearest visible block on a contraption. Creative mode copies its native item; Ctrl + middle-click also copies block entity data. Survival selects a matching item already in your inventory. |
 | Other Compatible Storage integrations | Original optional storage support and tags are retained, including Handcrafted, Quark, Storage Delight and supported Let's Do storage. These additional integrations have not been individually tested in this fork. |
 
-This is a storage/furniture integration. It does not make every block tick on an assembled train. Active brewing, taps, freezer processing, cooking machines, glassware holders and arbitrary modded machines are outside this release's functionality. World Liquor's existing integrations continue to supply their own features.
+Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Native placement of supported bar and food items can use adjacent cells on the contraption.
+
+Active ticking is limited to the listed bar and kitchen machines. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
 
 ## Extra furniture and storage
 
@@ -48,7 +54,7 @@ To reproduce the On the Move startup conflict check, place its 1.0.0 JAR and Ste
 
 Checks cover mounted inventory changes and menu slot counts, world reload/disassembly, all 48 seat colours, native sitting heights, native bottle restrictions and slot interactions, and preservation of World Liquor's existing cabinet handlers. Checks also cover chiseled bookshelf slots in all four facing directions, book restrictions, item components and save/reload/disassembly. Tests run in a separate test world; the Inspector integration also checks initial and late tracking, names, enchantments, authors and live book removal. Client rendering and multiplayer visuals have not been manually tested.
 
-Version 1.0.3 passes twelve server GameTests on NeoForge 21.1.253 with On the Move and Steam 'n' Rails present. This includes preserved workstation/bookshelf handlers and Farmer's Delight menus, and verifies specialized interactions remain available after universal-provider lookups. Isolated client checks cover Inspector integration and startup without the optional mods.
+Version 1.1.0 passes 25 server GameTests: the twelve original storage, seating, bookshelf and registration tests, plus native shaker mixing/pouring/serving, ingredient limits and quality restrictions, scheduled tap extraction across reload, moving cooking menus and servings, cutting recipes and tool wear, freezer processing across reload, holder slots, stove cooking, feast portions, full barrel assembly and brewing, creative Pick Block data copying, passenger overflow drops and stationary-world isolation. Isolated client checks load the Pick Block and cooking-menu hooks as well as Inspector compatibility. Verification classes and development dependency JARs are excluded from the release.
 
 ## Provenance and license
 

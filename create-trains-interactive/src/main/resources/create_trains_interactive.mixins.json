@@ -5,6 +5,13 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ChiseledBookshelfAccess",
+    "NativeTrainLevelMixin",
+    "NativeTrainEntityMixin",
+    "NativeTrainServerLevelMixin",
+    "NativeTrainPlayerMixin",
+    "NativeTrainPlayerSoundMixin",
+    "NativeTrainPlayerDropMixin",
+    "NativeTrainMenuMixin",
     "SimpleRegistryAccess",
     "OnTheMoveInteractionsMixin",
     "OnTheMoveStorageMixin",
@@ -26,6 +33,8 @@
   ],
   "server": [],
   "client": [
+    "MovingCookingPotMenuMixin",
+    "TrainPickBlockMixin",
     "BookshelfInspectorMixin",
     "BookshelfInspectorResponseMixin",
     "ContraptionHandlerClientMixin"
