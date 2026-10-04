@@ -27,11 +27,25 @@ public final class TrainEditingTests {
     public static void serverWhitelistBlocksStructureEditsAndKeepsFilledShakers(GameTestHelper helper) {
         if (!net.neoforged.fml.ModList.get().isLoaded("createonthemove")) { helper.succeed(); return; }
         helper.assertTrue(TrainEditingConfig.allows(Blocks.SMOKER) && !TrainEditingConfig.allows(Blocks.STONE), "The default whitelist must allow cooking and protect structural blocks");
+        for (var id : java.util.List.of("kaleidoscope_tavern:bar_cabinet", "kaleidoscope_tavern:glass_bar_cabinet",
+                "kaleidoscope_tavern:cellar_cabinet", "kaleidoscope_tavern:table", "kaleidoscope_tavern:barrel", "farmersdelight:oak_cabinet"))
+            helper.assertTrue(!TrainEditingConfig.allows(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id))), "Default editing must protect " + id);
+        for (var block : BuiltInRegistries.BLOCK) {
+            var id = BuiltInRegistries.BLOCK.getKey(block);
+            if (id.getNamespace().equals("kaleidoscope_world_liquor") && id.getPath().contains("cabinet"))
+                helper.assertTrue(!TrainEditingConfig.allows(block), "World Liquor cabinets must remain protected: " + id);
+        }
+        for (var id : java.util.List.of("kaleidoscope_tavern:empty_bottle", "kaleidoscope_tavern:empty_glassware", "kaleidoscope_tavern:shaker",
+                "farmersdelight:skillet", "farmersdelight:cooking_pot", "farmersdelight:cutting_board", "farmersdelight:roast_chicken_block"))
+            helper.assertTrue(TrainEditingConfig.allows(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id))), "Portable service item must remain editable: " + id);
         helper.assertTrue(TrainEditingConfig.matches(ResourceLocation.parse("example:chair"), java.util.List.of("example:*"))
                 && !TrainEditingConfig.matches(ResourceLocation.parse("minecraft:stone"), java.util.List.of("example:*")), "Namespace whitelist entries must match only their own mod");
         var c = new BearingContraption(false, Direction.EAST);
         c.getBlocks().put(BlockPos.ZERO, new StructureBlockInfo(BlockPos.ZERO, Blocks.STONE.defaultBlockState(), null));
         c.getBlocks().put(BlockPos.ZERO.south(), new StructureBlockInfo(BlockPos.ZERO.south(), Blocks.SMOKER.defaultBlockState(), null));
+        var cabinetPos = BlockPos.ZERO.north();
+        var cabinet = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("kaleidoscope_tavern:bar_cabinet"));
+        c.getBlocks().put(cabinetPos, new StructureBlockInfo(cabinetPos, cabinet.defaultBlockState(), null));
         c.anchor = BlockPos.ZERO; c.bounds = new AABB(0, 0, 0, 1, 1, 2); c.getStorage().initialize();
         var train = OrientedContraptionEntity.create(helper.getLevel(), c, Direction.SOUTH);
         var at = helper.absolutePos(new BlockPos(1, 2, 1));
@@ -46,6 +60,8 @@ public final class TrainEditingTests {
         player.getAbilities().instabuild = true;
         net.woudlee.createonthemove.contraption.ContraptionBlockBreaker.breakBlock(player, train.getId(), BlockPos.ZERO);
         helper.assertTrue(c.getBlocks().containsKey(BlockPos.ZERO), "Creative mode must also be unable to break non-whitelisted structural blocks");
+        net.woudlee.createonthemove.contraption.ContraptionBlockBreaker.breakBlock(player, train.getId(), cabinetPos);
+        helper.assertTrue(c.getBlocks().containsKey(cabinetPos), "An actual cabinet break request must be rejected");
         net.woudlee.createonthemove.contraption.ContraptionBlockBreaker.breakBlock(player, train.getId(), BlockPos.ZERO.south());
         helper.assertTrue(!c.getBlocks().containsKey(BlockPos.ZERO.south()), "Whitelisted cooking blocks must remain breakable");
         player.getAbilities().instabuild = false;
@@ -61,18 +77,35 @@ public final class TrainEditingTests {
         helper.assertTrue(shaker.isEmpty(), "Survival placement must consume exactly the placed shaker");
         var allowedBefore = java.util.List.copyOf(TrainEditingConfig.ALLOWED_BLOCKS.get());
         boolean enabledBefore = TrainEditingConfig.ENABLED.get();
+        boolean portableBefore = TrainEditingConfig.PORTABLE_SERVICE_BLOCKS.get();
+        boolean messagesBefore = TrainEditingConfig.SHOW_REJECTION_MESSAGES.get();
         try {
+            var messages = new java.util.ArrayList<net.minecraft.network.chat.Component>();
+            var listener = new net.neoforged.neoforge.common.util.FakePlayer(helper.getLevel(), new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "edit-warning-test")) {
+                @Override public void displayClientMessage(net.minecraft.network.chat.Component message, boolean actionBar) { messages.add(message); }
+            };
+            helper.assertTrue(!messagesBefore, "Whitelist warnings must be off by default");
+            TrainEditingConfig.rejected(listener);
+            helper.assertTrue(messages.isEmpty(), "Default rejection must be silent");
+            TrainEditingConfig.SHOW_REJECTION_MESSAGES.set(true);
+            TrainEditingConfig.rejected(listener);
+            helper.assertTrue(messages.size() == 1 && messages.getFirst().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents content
+                    && content.getKey().equals("create_trains_interactive.editing.not_allowed"), "Opt-in rejection must show the translated warning");
             TrainEditingConfig.ALLOWED_BLOCKS.set(java.util.List.of("minecraft:stone"));
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE, 2));
             helper.assertTrue(net.woudlee.createonthemove.contraption.ContraptionBlockPlacer.tryPlaceBlock(player, train, BlockPos.ZERO, Direction.WEST, InteractionHand.MAIN_HAND), "The server's customized whitelist must control actual placement");
             helper.assertTrue(c.getBlocks().containsKey(BlockPos.ZERO.west()) && player.getMainHandItem().getCount() == 1, "Allowed custom placement must consume one item");
             TrainEditingConfig.ALLOWED_BLOCKS.set(java.util.List.of());
+            TrainEditingConfig.PORTABLE_SERVICE_BLOCKS.set(false);
             helper.assertTrue(!TrainEditingConfig.allows(Blocks.STONE), "An empty enabled whitelist must reject every block");
+            helper.assertTrue(!TrainEditingConfig.allows(cabinet) && !TrainEditingConfig.allows(BuiltInRegistries.BLOCK.get(ResourceLocation.parse("kaleidoscope_tavern:shaker"))), "Servers must be able to disable the portable service category too");
             TrainEditingConfig.ENABLED.set(false);
             helper.assertTrue(TrainEditingConfig.allows(Blocks.STONE), "Servers must be able to disable the restriction");
         } finally {
             TrainEditingConfig.ALLOWED_BLOCKS.set(allowedBefore);
             TrainEditingConfig.ENABLED.set(enabledBefore);
+            TrainEditingConfig.PORTABLE_SERVICE_BLOCKS.set(portableBefore);
+            TrainEditingConfig.SHOW_REJECTION_MESSAGES.set(messagesBefore);
         }
         train.discard();
         helper.succeed();

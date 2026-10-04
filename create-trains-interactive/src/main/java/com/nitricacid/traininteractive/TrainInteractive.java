@@ -31,6 +31,11 @@ public final class TrainInteractive {
         });
         // Known furniture only. No guesswork based on names such as 'seat' or 'cabinet'.
         for (Block block : BuiltInRegistries.BLOCK) {
+            // Explicit entries take precedence over On the Move's universal
+            // provider, which can otherwise mask Create's wooden-trapdoor provider.
+            if (block instanceof net.minecraft.world.level.block.TrapDoorBlock)
+                OnTheMoveCompat.registerIfUnclaimed(MovingInteractionBehaviour.REGISTRY, block,
+                        new com.simibubi.create.content.contraptions.behaviour.TrapdoorMovingInteraction());
             if (FurnitureSeats.height(block.defaultBlockState()).isPresent()) {
                 if (MovementBehaviour.REGISTRY.get(block) == null)
                     MovementBehaviour.REGISTRY.register(block, new SeatMovementBehaviour());

@@ -29,6 +29,7 @@ public class Create_compatible_storage {
     public Create_compatible_storage(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, com.nitricacid.traininteractive.FurnitureSeats.SPEC);
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.nitricacid.traininteractive.TrainEditingConfig.SPEC);
+        modEventBus.addListener(com.nitricacid.traininteractive.TrainEditingConfig::loaded);
         // IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         if(ModList.get().isLoaded("moonlight")) {

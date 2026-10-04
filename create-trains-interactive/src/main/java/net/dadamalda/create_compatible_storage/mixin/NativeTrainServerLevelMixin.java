@@ -48,7 +48,9 @@ public abstract class NativeTrainServerLevelMixin {
         if (world == null) return;
         var point = world.global(new Vec3(x, y, z));
         MovingTrainWorld.outside(() -> {
-            trainsInteractive$level().playSeededSound(player, point.x, point.y, point.z, sound, source, volume, pitch, seed);
+            // Native train item actions run only on the server, so the placer has
+            // no predicted local sound and must receive this broadcast too.
+            trainsInteractive$level().playSeededSound(null, point.x, point.y, point.z, sound, source, volume, pitch, seed);
             return null;
         });
         ci.cancel();

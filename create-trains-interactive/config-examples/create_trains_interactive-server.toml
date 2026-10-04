@@ -3,5 +3,13 @@
 # Normal use of existing blocks is unaffected.
 restrictTrainEditing = true
 
-# Exact block IDs or namespace:* entries. Empty means no editing while enabled.
-allowedTrainBlocks = ["kaleidoscope_tavern:*", "kaleidoscope_world_liquor:*", "farmersdelight:*", "minecraft:furnace", "minecraft:smoker", "minecraft:campfire", "minecraft:soul_campfire"]
+# Portable bottles, glassware, drinks, shakers and cooking/serving blocks.
+# Cabinets, furniture, racks, freezers and brewing barrels stay protected.
+allowPortableServiceBlocks = true
+
+# Optional action-bar warning for rejected edits; quiet by default.
+showEditingWhitelistMessages = false
+
+# Additional exact block IDs or namespace:* entries.
+# Disable portable service blocks and empty this list to prevent all editing.
+allowedTrainBlocks = ["minecraft:furnace", "minecraft:smoker", "minecraft:campfire", "minecraft:soul_campfire"]

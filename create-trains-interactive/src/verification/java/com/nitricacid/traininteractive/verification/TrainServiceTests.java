@@ -36,6 +36,71 @@ public final class TrainServiceTests {
     private static final BlockPos POS = new BlockPos(1, 2, 1);
 
     @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void trapdoorsUseCreateInteractionDespiteUniversalProvider(GameTestHelper helper) throws Exception {
+        for (var block : java.util.List.of(Blocks.OAK_TRAPDOOR, Blocks.COPPER_TRAPDOOR,
+                com.simibubi.create.AllBlocks.TRAIN_TRAPDOOR.get(), com.simibubi.create.AllBlocks.FRAMED_GLASS_TRAPDOOR.get())) {
+            var handler = com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.REGISTRY.get(block);
+            helper.assertTrue(handler instanceof com.simibubi.create.content.contraptions.behaviour.TrapdoorMovingInteraction,
+                    "The universal provider must not mask Create's trapdoor handler: " + BuiltInRegistries.BLOCK.getKey(block));
+            var train = assemble(helper, block.defaultBlockState());
+            var player = new MenuPlayer(helper.getLevel());
+            aim(player, train, BlockPos.ZERO);
+            helper.assertTrue(train.handlePlayerInteraction(player, BlockPos.ZERO, Direction.SOUTH, InteractionHand.MAIN_HAND), "A closed moving trapdoor must open");
+            helper.assertTrue(train.getContraption().getBlocks().get(BlockPos.ZERO).state().getValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN), "Moving trapdoor must retain its open state");
+            helper.assertTrue(train.handlePlayerInteraction(player, BlockPos.ZERO, Direction.SOUTH, InteractionHand.MAIN_HAND), "An open moving trapdoor must close");
+            helper.assertTrue(!train.getContraption().getBlocks().get(BlockPos.ZERO).state().getValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN), "Moving trapdoor must retain its closed state");
+            if (net.neoforged.fml.ModList.get().isLoaded("createonthemove"))
+                helper.assertTrue(!com.nitricacid.traininteractive.TrainEditingConfig.allows(block), "Trapdoor use must not make it breakable by default");
+            train.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void nativePlacementSoundsReachPlacerAtTrainCoordinates(GameTestHelper helper) throws Exception {
+        var train = assemble(helper, state("kaleidoscope_tavern:shaker"));
+        var world = ((TrainWorldAccess) train).trainsInteractive$world();
+        var player = new MenuPlayer(helper.getLevel());
+        aim(player, train, BlockPos.ZERO);
+        var packets = new java.util.ArrayList<net.minecraft.network.protocol.game.ClientboundSoundPacket>();
+        player.setShiftKeyDown(true);
+        player.connection = new net.minecraft.server.network.ServerGamePacketListenerImpl(helper.getLevel().getServer(),
+                new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND) {
+                    @Override public void setListenerForServerboundHandshake(net.minecraft.network.PacketListener listener) {}
+                }, player, net.minecraft.server.network.CommonListenerCookie.createInitial(player.getGameProfile(), false)) {
+            @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {
+                if (packet instanceof net.minecraft.network.protocol.game.ClientboundSoundPacket sound) packets.add(sound);
+            }
+        };
+        var playerList = helper.getLevel().getServer().getPlayerList();
+        var playersField = net.minecraft.server.players.PlayerList.class.getDeclaredField("players");
+        playersField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        var players = (java.util.List<net.minecraft.server.level.ServerPlayer>) playersField.get(playerList);
+        players.add(player);
+        try {
+            world.set(BlockPos.ZERO.below(), Blocks.STONE.defaultBlockState());
+            for (var id : java.util.List.of("kaleidoscope_tavern:empty_bottle", "kaleidoscope_tavern:empty_glassware", "kaleidoscope_tavern:wine",
+                    "kaleidoscope_world_liquor:absolut_vodka", "kaleidoscope_tavern:shaker", "farmersdelight:skillet")) {
+                world.set(BlockPos.ZERO, Blocks.AIR.defaultBlockState());
+                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item(id)));
+                packets.clear();
+                var hit = new BlockHitResult(new Vec3(.5, 0, .5), Direction.UP, BlockPos.ZERO.below(), false);
+                helper.assertTrue(world.run(hit.getBlockPos(), () -> NativeServiceInteraction.interact(player, InteractionHand.MAIN_HAND, hit, world)), "Native train placement must succeed: " + id);
+                helper.assertTrue(packets.size() == 1, "The placing player must receive exactly one native placement sound: " + id + " received " + packets.size());
+                var packet = packets.getFirst();
+                var expected = world.global(Vec3.atCenterOf(BlockPos.ZERO));
+                helper.assertTrue(new Vec3(packet.getX(), packet.getY(), packet.getZ()).distanceTo(expected) < .22, "Placement sound must follow the train's world coordinates: " + id);
+                helper.assertTrue(packet.getSound().value() == world.state(BlockPos.ZERO).getSoundType().getPlaceSound(), "Placement must retain the item's native sound: " + id);
+            }
+        } finally {
+            players.remove(player);
+            train.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
     public static void playerOverflowDropsKeepWorldCoordinates(GameTestHelper helper) throws Exception {
         var train = assemble(helper, state("kaleidoscope_tavern:shaker"));
         var world = ((TrainWorldAccess) train).trainsInteractive$world();
