@@ -22,7 +22,10 @@ neoForge {
     version = neo_version
     addModdingDependenciesTo sourceSets.verification
     runs {
-        client { client() }
+        client {
+            client()
+            systemProperty 'create_trains_interactive.verifyInspector', project.findProperty('verifyInspector') ?: 'false'
+        }
         server { server(); programArgument '--nogui' }
         gameTestServer {
             type = 'gameTestServer'
@@ -56,7 +59,11 @@ dependencies {
     compileOnly 'maven.modrinth:iron-shulker-boxes:1.21-neoforge-7.0.1'
     compileOnly 'maven.modrinth:create-storage-neo-forge:1.1.4-neoforge'
     compileOnly fileTree('dev-libs') { include 'kaleidoscopetavern-*.jar' }
-    runtimeOnly fileTree('dev-libs') { include '*.jar' }
+    compileOnly fileTree('dev-libs') { include 'bookshelfinspector-neoforge-2.4+1.21.1.jar' }
+    runtimeOnly fileTree('dev-libs') {
+        include '*.jar'
+        if (project.hasProperty('withoutInspector')) exclude 'bookshelfinspector-*.jar'
+    }
     verificationImplementation sourceSets.main.output
 }
 

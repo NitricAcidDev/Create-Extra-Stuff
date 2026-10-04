@@ -239,6 +239,46 @@ public final class TrainCompatibilityTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", templateNamespace = "create_trains_interactive")
+    public static void inspectorReceivesBooksFromNewAndReloadedTrains(GameTestHelper helper) throws Exception {
+        helper.setBlock(BLOCK, net.minecraft.world.level.block.Blocks.CHISELED_BOOKSHELF.defaultBlockState());
+        var shelf = (net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity) helper.getBlockEntity(BLOCK);
+        var named = new ItemStack(Items.BOOK);
+        named.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Train library"));
+        var enchanted = new ItemStack(Items.ENCHANTED_BOOK);
+        var sharpness = helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS);
+        enchanted.enchant(sharpness, 3);
+        var written = new ItemStack(Items.WRITTEN_BOOK);
+        written.set(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT, new net.minecraft.world.item.component.WrittenBookContent(net.minecraft.server.network.Filterable.passThrough("Journey"), "Train author", 0, java.util.List.of(net.minecraft.server.network.Filterable.passThrough(net.minecraft.network.chat.Component.literal("Page"))), true));
+        shelf.setItem(0, named); shelf.setItem(1, enchanted); shelf.setItem(2, written);
+        var entity = assemble(helper);
+        var contraption = entity.getContraption();
+        for (int pass = 0; pass < 2; pass++) {
+            if (pass == 1) {
+                var saved = contraption.writeNBT(helper.getLevel().registryAccess(), false);
+                contraption = Contraption.fromNBT(helper.getLevel(), saved, false);
+                ((net.dadamalda.create_compatible_storage.mixin.ContraptionUpdateTagsAccess) contraption).trainsInteractive$updateTags().put(BlockPos.ZERO, new net.minecraft.nbt.CompoundTag());
+            }
+            var sent = contraption.writeNBT(helper.getLevel().registryAccess(), true);
+            var received = Contraption.fromNBT(helper.getLevel(), sent, true);
+            var info = received.getBlocks().get(BlockPos.ZERO);
+            helper.assertTrue(ItemStack.isSameItemSameComponents(named, com.nitricacid.traininteractive.MovingBookshelfContents.read(info, helper.getLevel().registryAccess(), 0)), "Initial/late tracking must send custom book names");
+            var receivedEnchanted = com.nitricacid.traininteractive.MovingBookshelfContents.read(info, helper.getLevel().registryAccess(), 1);
+            helper.assertTrue(receivedEnchanted.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS).getLevel(sharpness) == 3, "Inspector must receive enchantments and their levels");
+            helper.assertTrue(com.nitricacid.traininteractive.MovingBookshelfContents.read(info, helper.getLevel().registryAccess(), 2).get(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT).author().equals("Train author"), "Inspector must receive written book authors");
+            helper.assertTrue(com.nitricacid.traininteractive.MovingBookshelfContents.read(info, helper.getLevel().registryAccess(), 5).isEmpty(), "Empty slots must not show stale books");
+            var clientEntity = OrientedContraptionEntity.create(helper.getLevel(), received, Direction.SOUTH);
+            var changed = info.nbt().copy();
+            var books = net.minecraft.core.NonNullList.withSize(6, ItemStack.EMPTY);
+            net.minecraft.world.ContainerHelper.loadAllItems(changed, books, helper.getLevel().registryAccess());
+            books.set(0, ItemStack.EMPTY);
+            net.minecraft.world.ContainerHelper.saveAllItems(changed, books, true, helper.getLevel().registryAccess());
+            CabinetDataPacket.apply(clientEntity, BlockPos.ZERO, changed);
+            helper.assertTrue(com.nitricacid.traininteractive.MovingBookshelfContents.read(clientEntity.getContraption().getBlocks().get(BlockPos.ZERO), helper.getLevel().registryAccess(), 0).isEmpty(), "Live shelf updates must clear removed books");
+        }
+        helper.succeed();
+    }
+
     private static void aimAtBookshelfSlot(MenuTestPlayer player, OrientedContraptionEntity entity, Direction facing, int slot) {
         double u = new double[]{0.1875, 0.5, 0.84375}[slot % 3];
         double y = slot < 3 ? 0.75 : 0.25;

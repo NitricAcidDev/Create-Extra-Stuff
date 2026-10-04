@@ -1,0 +1,25 @@
+package com.nitricacid.traininteractive.verification;
+
+import net.minecraft.client.Minecraft;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+
+@EventBusSubscriber(modid = "create_trains_interactive", value = Dist.CLIENT)
+public final class InspectorClientBootstrap {
+    private static boolean finished;
+
+    @SubscribeEvent
+    public static void verify(ClientTickEvent.Post event) throws Exception {
+        if (finished || !Boolean.getBoolean("create_trains_interactive.verifyInspector")) return;
+        finished = true;
+        if (ModList.get().isLoaded("bookshelfinspector")) {
+            InspectorClientChecks.check(event);
+        } else {
+            org.slf4j.LoggerFactory.getLogger(InspectorClientBootstrap.class).info("Optional Bookshelf Inspector absence check passed");
+            Minecraft.getInstance().stop();
+        }
+    }
+}

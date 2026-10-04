@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ChiseledBookshelfAccess",
+    "BookshelfSyncMixin",
     "ChuteBlockEntityMixin",
     "CounterBlockMixin",
     "DefaultUnpackingHandlerMixin",
@@ -22,6 +23,8 @@
   ],
   "server": [],
   "client": [
+    "BookshelfInspectorMixin",
+    "BookshelfInspectorResponseMixin",
     "ContraptionHandlerClientMixin"
   ],
   "injectors": {

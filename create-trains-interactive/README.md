@@ -4,7 +4,7 @@ A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, chise
 
 ## Installation
 
-1. Close Minecraft and put `create-trains-interactive-1.21.1-1.0.1.jar` in the profile's `mods` folder.
+1. Close Minecraft and put `create-trains-interactive-1.21.1-1.0.2.jar` in the profile's `mods` folder.
 2. Install the same JAR on clients and dedicated servers.
 3. Reassemble existing trains and contraptions to capture the new inventories, seats and interaction handlers.
 
@@ -19,6 +19,7 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 | Kaleidoscope Tavern 1.2.0 | Cellar cabinet, holder, circular rack and tilted rack allow placing/retrieving bottles in the clicked slot; original bottle restrictions and one-bottle limits apply. |
 | Kaleidoscope World Liquor 1.1.9 fix | All 16 chairs/stools are captured as persistent seats. Native chair height takes precedence over the installed version's existing seat-position handler. Its ten existing cabinet interaction handlers remain in place. |
 | Minecraft chiseled bookshelves | Insert and retrieve books from the clicked front slot. Books, occupied-slot visuals and the last clicked slot persist through save/reload and disassembly. |
+| Bookshelf Inspector 2.4 (NeoForge 1.21.1) | Its existing HUD shows the selected book's name, enchantments and author on moving chiseled bookshelves. Empty slots hide the overlay; stationary shelves keep their normal behavior. Install Bookshelf Inspector on clients and servers to enable its HUD. |
 | Farmer's Delight 1.3.4 | Cabinets and wooden/bamboo baskets can be opened on contraptions; their inventories participate in Create storage, survive save/reload and restore changed contents on disassembly. Baskets use a five-slot menu. |
 | Other Compatible Storage integrations | Original optional storage support and tags are retained, including Handcrafted, Quark, Storage Delight and supported Let's Do storage. These additional integrations have not been individually tested in this fork. |
 
@@ -40,9 +41,9 @@ Storage integrations can be extended by datapacks using Create's `create:simple_
 
 Use Java 21 and the included Gradle wrapper. `gradlew build` builds the release JAR. `gradlew runGameTestServer` runs the isolated Minecraft verification suite. Verification classes and test structures are excluded from the release JAR.
 
-For the verification suite, supply copies of the installed Kaleidoscope Tavern, World Liquor, Farmer's Delight, Farmer's Delight Extended, Create Gears and Tavern, and Kotlin for Forge JARs in `dev-libs/`. These third-party JARs are not included in the released mod or source archive. Create/Ponder/Flywheel/Registrate and optional compile-time integrations are resolved from their public Maven repositories.
+For the verification suite, supply copies of the installed Kaleidoscope Tavern, World Liquor, Farmer's Delight, Farmer's Delight Extended, Create Gears and Tavern, and Kotlin for Forge JARs in `dev-libs/`. The Bookshelf Inspector NeoForge 2.4+1.21.1 JAR is also needed in `dev-libs/` to compile its optional HUD integration; add Cloth Config for client verification. Run `gradlew runClient -PverifyInspector=true` to check the client hooks and HUD data handoff. These third-party JARs are not included in the released mod or source archive. Create/Ponder/Flywheel/Registrate and optional compile-time integrations are resolved from their public Maven repositories.
 
-Checks cover mounted inventory changes and menu slot counts, world reload/disassembly, all 48 seat colours, native sitting heights, native bottle restrictions and slot interactions, and preservation of World Liquor's existing cabinet handlers. Checks also cover chiseled bookshelf slots in all four facing directions, book restrictions, item components and save/reload/disassembly. Tests run in a separate test world; client rendering and multiplayer visuals have not been manually tested.
+Checks cover mounted inventory changes and menu slot counts, world reload/disassembly, all 48 seat colours, native sitting heights, native bottle restrictions and slot interactions, and preservation of World Liquor's existing cabinet handlers. Checks also cover chiseled bookshelf slots in all four facing directions, book restrictions, item components and save/reload/disassembly. Tests run in a separate test world; the Inspector integration also checks initial and late tracking, names, enchantments, authors and live book removal. Client rendering and multiplayer visuals have not been manually tested.
 
 ## Provenance and license
 
