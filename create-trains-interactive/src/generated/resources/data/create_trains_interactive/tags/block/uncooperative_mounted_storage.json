@@ -1,0 +1,176 @@
+{
+  "values": [
+    {
+      "id": "candlelight:sideboard",
+      "required": false
+    },
+    {
+      "id": "brewery:sideboard",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_cabinet",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_dresser",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/small_drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/drawers_with_books",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/cabinet_variants",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/glass_cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/bookshelves_with_door",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/drawers_with_door",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/cabinets_with_countertops",
+      "required": false
+    },
+    {
+      "id": "#another_furniture:drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/storage_cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/coolers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/kitchen_drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/crates",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/mailboxes",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/barrels",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/drawer",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/cabinet",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/storage_pot",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldbp/palm_cabinet",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldba/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldba/drawer",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldbr/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldbr/drawer",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldm/shelf",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldcl/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldcl/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldf/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldf/coffer",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:desks",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:nightstands",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:counters",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:cupboards",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:drawers",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:shelves",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:side_tables",
+      "required": false
+    },
+    {
+      "id": "#chipped:barrel",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:wooden_basket",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:bamboo_basket",
+      "required": false
+    }
+  ]
+}

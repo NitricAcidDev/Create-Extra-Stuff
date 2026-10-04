@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "#create_trains_interactive:uncooperative_mounted_storage",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:uncooperative_stationary_chests",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ww/closets",
+      "required": false
+    }
+  ]
+}

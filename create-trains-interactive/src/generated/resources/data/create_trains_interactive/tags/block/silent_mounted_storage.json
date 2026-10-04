@@ -1,0 +1,60 @@
+{
+  "values": [
+    {
+      "id": "farmersdelight:basket",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/mailboxes",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/barrels",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:desks",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:nightstands",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:counters",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:cupboards",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:drawers",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:shelves",
+      "required": false
+    },
+    {
+      "id": "#handcrafted:side_tables",
+      "required": false
+    },
+    {
+      "id": "ars_nouveau:repository",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_cabinet",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_dresser",
+      "required": false
+    },
+    {
+      "id": "brewery:sideboard",
+      "required": false
+    }
+  ]
+}

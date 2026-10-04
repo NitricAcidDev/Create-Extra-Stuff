@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "#create_trains_interactive:ic/iron_chest_mounted_storage",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/crystal_chest",
+      "required": false
+    },
+    {
+      "id": "candlelight:sideboard",
+      "required": false
+    }
+  ]
+}

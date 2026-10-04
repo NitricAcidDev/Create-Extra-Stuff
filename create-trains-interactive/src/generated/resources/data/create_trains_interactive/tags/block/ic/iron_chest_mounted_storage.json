@@ -1,0 +1,28 @@
+{
+  "values": [
+    {
+      "id": "#create_trains_interactive:ic/dirt_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/copper_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/iron_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/gold_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/diamond_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/obsidian_chest",
+      "required": false
+    }
+  ]
+}

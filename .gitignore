@@ -4,3 +4,5 @@
 **/.gradle/
 create-blaze-burner-fuel-overrides/cca-source/
 create-blaze-burner-fuel-overrides/create-source/
+/work/
+/outputs/

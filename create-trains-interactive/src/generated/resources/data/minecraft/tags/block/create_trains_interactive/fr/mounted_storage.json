@@ -1,0 +1,20 @@
+{
+  "values": [
+    {
+      "id": "#create_trains_interactive:fr/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/kitchen_drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/storage_cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/kitchen_storage_cabinets",
+      "required": false
+    }
+  ]
+}

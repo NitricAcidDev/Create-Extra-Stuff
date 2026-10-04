@@ -1,0 +1,192 @@
+{
+  "values": [
+    {
+      "id": "carved_wood:oak_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:spruce_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:birch_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:jungle_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:acacia_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:dark_oak_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:crimson_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:warped_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:mangrove_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:bamboo_barrel",
+      "required": false
+    },
+    {
+      "id": "carved_wood:cherry_barrel",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:silent_mounted_storage",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:barrel_sound",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/cabinet_sound",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/cabinet_variants",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/glass_cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/bookshelves_with_door",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/drawers_with_door",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:sd/cabinets_with_countertops",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/storage_cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/coolers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/kitchen_drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:fr/crates",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/iron_chest_mounted_storage",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ic/crystal_chest",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:isb/iron_shulker_box_mounted_storage",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/cabinet",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/drawer",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/storage_pot",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldv/barrels",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldbp/palm_cabinet",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldm/shelf",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldcl/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldcl/drawers",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldf/cabinets",
+      "required": false
+    },
+    {
+      "id": "#create_trains_interactive:ldf/coffer",
+      "required": false
+    },
+    {
+      "id": "ars_nouveau:repository",
+      "required": false
+    },
+    {
+      "id": "alexscaves:metal_barrel",
+      "required": false
+    },
+    {
+      "id": "alexscaves:rusty_barrel",
+      "required": false
+    },
+    {
+      "id": "alexscaves:gingerbarrel",
+      "required": false
+    },
+    {
+      "id": "candlelight:sideboard",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_cabinet",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_dresser",
+      "required": false
+    },
+    {
+      "id": "#chipped:barrel",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:wooden_basket",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:bamboo_basket",
+      "required": false
+    }
+  ]
+}

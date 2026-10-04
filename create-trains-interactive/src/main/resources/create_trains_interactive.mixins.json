@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.dadamalda.create_compatible_storage.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ChiseledBookshelfAccess",
+    "ChuteBlockEntityMixin",
+    "CounterBlockMixin",
+    "DefaultUnpackingHandlerMixin",
+    "FrogportBlockEntityMixin",
+    "InvManipulationBehaviourMixin",
+    "MountedItemStorageMixin",
+    "PackagerBlockMixin",
+    "PasserEntityMixin",
+    "SchematicannonBlockEntityMixin",
+    "FurnitureContraptionMixin",
+    "FurniturePassengerMixin",
+    "ContraptionUpdateTagsAccess",
+    "TavernCabinetAccess",
+    "TavernStorageAccess"
+  ],
+  "server": [],
+  "client": [
+    "ContraptionHandlerClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

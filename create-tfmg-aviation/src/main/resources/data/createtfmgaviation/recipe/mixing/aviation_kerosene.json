@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "tfmg:kerosene",
+      "amount": 800
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "tfmg:heavy_oil",
+      "amount": 200
+    }
+  ],
+  "results": [
+    {
+      "id": "aeroengineering:aviation_kerosene",
+      "amount": 1000
+    }
+  ]
+}

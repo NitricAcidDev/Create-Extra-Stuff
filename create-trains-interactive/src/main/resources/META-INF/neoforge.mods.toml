@@ -1,0 +1,55 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "GPL-3.0-only"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+description = '''${mod_description}'''
+
+[[mixins]]
+config = "create_trains_interactive.mixins.json"
+
+[[dependencies."${mod_id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.228,21.2)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "create"
+type = "required"
+versionRange = "[6.0.10,6.1)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "kaleidoscope_tavern"
+type = "optional"
+versionRange = "[1.2.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "kaleidoscope_world_liquor"
+type = "optional"
+versionRange = "[1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "create_compatible_storage"
+type = "incompatible"
+reason = "Create: Trains Interactive includes its own fork of Compatible Storage."
+versionRange = "[0,)"
+side = "BOTH"
