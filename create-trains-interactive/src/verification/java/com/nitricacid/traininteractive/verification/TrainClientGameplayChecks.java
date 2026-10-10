@@ -152,6 +152,7 @@ public final class TrainClientGameplayChecks {
             graphics.flush();
             org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Moving drink tooltip effects, colour and bottle quality checks passed");
             org.slf4j.LoggerFactory.getLogger(TrainClientGameplayChecks.class).info("Oversized train spawned complete on its first client tick; moving shaker raycast, inventory and native overlay checks passed");
+            TrainMusicPhotoClientChecks.check(client, graphics);
             stage = 6;
             client.stop();
         }

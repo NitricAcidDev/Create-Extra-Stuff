@@ -4,7 +4,7 @@ A NeoForge 1.21.1 fork of Create: Compatible Storage with furniture seats, books
 
 ## Installation
 
-1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.4.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
+1. Close Minecraft and put `create-trains-interactive-1.21.1-1.1.5.jar` in the profile's `mods` folder, replacing the older Trains Interactive JAR.
 2. Install the same JAR on clients and dedicated servers.
 3. Restart Minecraft. When upgrading from versions before 1.1.0, reassemble existing trains to capture the new interaction handlers.
 
@@ -14,6 +14,9 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 
 | Mod | Supported behaviour |
 | --- | --- |
+| Create: Harmonics 1.1.7 | Andesite Jukebox displays its native Create control icon on a carriage. Right-click the icon to choose play, pause and its playback modes; settings reach the existing music actor without replacing its disc or playback data. Onboard redstone updates its power setting. |
+| Exposure 1.9.19 | Lightroom opens its native menu on trains and prints photos using its normal film, paper, dyes and light requirement. Printing, inventory and output persist with the carriage. |
+| Minecraft redstone lamps | Onboard power and dust update lamps, including the normal switch-off delay. Their light spreads around train blocks for onboard light checks; opaque blocks block light and roofs block direct daylight. This does not add stationary chunk lighting around moving trains. |
 | Kaleidoscope Tavern 1.2.0 | All 16 sofas and 16 bar stools are moving seats, with native sitting height and passenger transfer during assembly. |
 | Kaleidoscope Tavern 1.2.0 | Bar cabinet and glass bar cabinet allow inserting and retrieving bottles, using the original bottle rules and left/right placement. |
 | Kaleidoscope Tavern 1.2.0 | Cellar cabinet, holder, circular rack and tilted rack allow placing/retrieving bottles in the clicked slot; original bottle restrictions and one-bottle limits apply. |
@@ -30,7 +33,7 @@ This build is a replacement for Create: Compatible Storage: do not install both.
 
 Use normal right-click interactions for supported bar and kitchen blocks. An empty hand retrieves shakers, glasses and drinks where their original mod supports it. Prepared shakers pour into empty glassware with right-click. Placement plays the native item sound for the placing player, and trapdoors open and close normally. If the train interaction or placement cannot act, held items use their normal right-click behavior, including books and food. Native placement of supported bar and food items can use adjacent cells on the contraption. A filled shaker pours into empty glassware or can be placed on a counter with its drink and ingredients intact. Its native ingredient overlay works on moving trains, and drink tooltips retain bottle quality and signature cocktail effects. With On the Move, release the attack button before mining another train block so removing one block cannot continue into the block underneath.
 
-Oversized carriage structures are included in the initial spawn bundle instead of appearing after a delayed recovery request. Active ticking is limited to the listed bar and kitchen machines. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
+Oversized carriage structures are included in the initial spawn bundle instead of appearing after a delayed recovery request. Active ticking is limited to the listed machines, Lightroom and lamp/dust updates. Arbitrary machines, full moving redstone networks and jumping/stomping on pressing tubs are not supplied by this integration. On the Move supplies additional functionality, including its own moving-bed handlers, when installed. Client rendering and multiplayer gameplay still need manual verification.
 
 Moving beds show the normal daytime or nearby-monster message before entering sleep. With On the Move installed, editing allows portable bottles, glassware, drinks, shakers, cooking tools, feasts and vanilla cooking blocks by default; cabinets and furniture stay protected. In the server config, `allowPortableServiceBlocks` controls the portable items, `allowedTrainBlocks` adds block IDs or `namespace:*` entries, and `restrictTrainEditing` toggles the restriction. The optional warning, `showEditingWhitelistMessages`, is off by default. Exact old default lists upgrade automatically; customized lists are preserved. Existing blocks can still be used normally.
 
@@ -54,7 +57,7 @@ For the verification suite, supply copies of the installed Kaleidoscope Tavern, 
 
 To build the optional On the Move integration, place its 1.0.0 JAR in `dev-libs/on-the-move/`. Add Steam 'n' Rails 0.3.0-beta.2 there for the combined regression check and run `gradlew runGameTestServer -PwithOnTheMove`. These optional dependencies are not bundled in the release.
 
-Version 1.1.4 is checked with 31 server GameTests and an isolated client world. Checks cover bar/kitchen interactions, storage, seats, bookshelves, filled-shaker placement and pickup, bed messages, cabinet protection, optional warnings, placement sounds, trapdoors, complete oversized spawns, held-item fallback, overlays and mining protection. Run `gradlew runClient -PwithOnTheMove -PverifyInspector=true -PverifyGameplay=true` for the client checks. Full Sable/shader modpacks and multiplayer visuals still need manual testing.
+Version 1.1.5 adds lamp/dust, native photo printing and Harmonics mode checks to the existing suite. Supply the installed Harmonics 1.1.7 and Exposure 1.9.19 JARs in `dev-libs/` to compile these integrations and run their checks. Run `gradlew runClient -PwithOnTheMove -PverifyInspector=true -PverifyGameplay=true` for the client checks. Full Sable/shader modpacks, audible playback and multiplayer visuals still need manual testing. Both clients and servers must update together (network protocol 5).
 
 ## Provenance and license
 

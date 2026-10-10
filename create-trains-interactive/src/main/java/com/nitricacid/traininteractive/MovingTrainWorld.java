@@ -34,6 +34,14 @@ public final class MovingTrainWorld {
     private final Set<BlockPos> changedStates = new HashSet<>();
     private final Set<BlockPos> tickingPositions = new HashSet<>();
     private final Set<BlockPos> networkDirty = new HashSet<>();
+    private static final Map<BlockEntity, java.lang.ref.WeakReference<MovingTrainWorld>> OWNERS = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+    private final TrainLighting lighting = new TrainLighting(this);
+    public TrainLighting lighting() { return lighting; }
+    public static void bind(BlockEntity be, MovingTrainWorld world) { OWNERS.put(be, new java.lang.ref.WeakReference<>(world)); }
+    public static MovingTrainWorld owner(BlockEntity be) {
+        var reference = OWNERS.get(be);
+        return reference == null ? null : reference.get();
+    }
     private BlockPos interactingPos = BlockPos.ZERO;
     private record Pending(Block block, long time) {}
     private final Map<BlockPos, Pending> pendingTicks = new HashMap<>();
@@ -109,11 +117,13 @@ public final class MovingTrainWorld {
             if (info.nbt() != null && info.nbt().contains("TrainScheduledTick"))
                 pendingTicks.put(pos.immutable(), new Pending(info.state().getBlock(), info.nbt().getLong("TrainScheduledTick")));
             be.setLevel(entity.level());
+            bind(be, this);
             blockEntities.put(pos.immutable(), be);
             saved.put(pos.immutable(), info.nbt() == null ? new CompoundTag() : info.nbt().copy());
         } else if (info.nbt() != null && !info.nbt().equals(saved.get(pos))) {
             // Another integration may have edited this block since our last call.
-            be.loadWithComponents(info.nbt().copy(), entity.level().registryAccess());
+            var refresh = be;
+            run(pos, () -> { refresh.loadWithComponents(info.nbt().copy(), entity.level().registryAccess()); return null; });
             saved.put(pos.immutable(), info.nbt().copy());
         }
         be.setBlockState(info.state());
@@ -127,6 +137,7 @@ public final class MovingTrainWorld {
                 && net.minecraft.core.Direction.stream().noneMatch(d -> contraption.getBlocks().containsKey(pos.relative(d))))
             return false;
         var previous = contraption.getBlocks().get(pos);
+        if (previous != null && previous.state() == state) return true;
         var nbt = previous != null && previous.state().getBlock() == state.getBlock() ? previous.nbt() : null;
         contraption.getBlocks().put(pos.immutable(), new StructureBlockInfo(pos.immutable(), state, nbt));
         if (previous == null || previous.state().getBlock() != state.getBlock()) {
@@ -151,6 +162,14 @@ public final class MovingTrainWorld {
 
     public void removeBlockEntity(BlockPos pos) {
         blockEntities.remove(pos); saved.remove(pos);
+    }
+
+    public void updateData(BlockPos pos, CompoundTag tag) {
+        var info = contraption.getBlocks().get(pos);
+        if (info == null || !info.state().hasBlockEntity()) return;
+        contraption.getBlocks().put(pos, new StructureBlockInfo(pos, info.state(), tag.copy()));
+        blockEntities.remove(pos); saved.remove(pos);
+        changedStates.add(pos.immutable());
     }
 
     public void flush(boolean notifyClients) {
@@ -197,14 +216,16 @@ public final class MovingTrainWorld {
         var id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         return id.getNamespace().equals("kaleidoscope_tavern")
                 || id.getNamespace().equals("kaleidoscope_world_liquor")
-                || id.getNamespace().equals("farmersdelight");
+                || id.getNamespace().equals("farmersdelight")
+                || id.toString().equals("exposure:lightroom")
+                || id.toString().equals("createharmonics:andesite_jukebox");
     }
 
     public static boolean ticks(BlockState state) {
         var id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         return switch (id.toString()) {
             case "kaleidoscope_tavern:barrel", "kaleidoscope_tavern:tap",
-                 "farmersdelight:cooking_pot", "farmersdelight:stove", "farmersdelight:skillet" -> true;
+                 "farmersdelight:cooking_pot", "farmersdelight:stove", "farmersdelight:skillet", "exposure:lightroom" -> true;
             default -> id.getNamespace().equals("kaleidoscope_world_liquor")
                     && (id.getPath().contains("freezer") || id.getPath().contains("brewing"));
         };
@@ -217,6 +238,7 @@ public final class MovingTrainWorld {
 
     public void tickAt(long time) {
         if (!(entity.level() instanceof ServerLevel) || contraption == null || !entity.isAlive()) return;
+        TrainSignals.update(this);
         // Copy the keys: serving drinks can replace glassware while a native ticker runs.
         for (var pos : java.util.List.copyOf(tickingPositions)) {
             var info = contraption.getBlocks().get(pos);

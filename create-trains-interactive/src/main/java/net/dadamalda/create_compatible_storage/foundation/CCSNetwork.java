@@ -8,11 +8,13 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @EventBusSubscriber(modid = Create_compatible_storage.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class CCSNetwork {
-    private static final String PROTOCOL = "4";
+    private static final String PROTOCOL = "5";
 
     @SubscribeEvent
     public static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(PROTOCOL);
+        registrar.playToServer(com.nitricacid.traininteractive.TrainMusicSettingsPacket.TYPE,
+            com.nitricacid.traininteractive.TrainMusicSettingsPacket.STREAM_CODEC, com.nitricacid.traininteractive.TrainMusicSettingsPacket::handle);
         registrar.playToClient(com.nitricacid.traininteractive.TrainHandUseFallback.TYPE,
             com.nitricacid.traininteractive.TrainHandUseFallback.STREAM_CODEC, com.nitricacid.traininteractive.TrainHandUseFallback::handle);
         registrar.playToServer(com.nitricacid.traininteractive.ContraptionResyncRequest.TYPE,

@@ -48,6 +48,20 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
+modId = "createharmonics"
+type = "optional"
+versionRange = "[1.1.7,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "exposure"
+type = "optional"
+versionRange = "[1.9.19,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
 modId = "create_compatible_storage"
 type = "incompatible"
 reason = "Create: Trains Interactive includes its own fork of Compatible Storage."

@@ -26,6 +26,10 @@ public record TrainBlockDataPacket(int entityId, BlockPos pos, BlockState state,
         var c = entity.getContraption();
         var old = c.getBlocks().get(pos);
         c.getBlocks().put(pos, new StructureBlockInfo(pos, state, state.hasBlockEntity() ? data.copy() : null));
+        for (var actor : c.getActors()) if (actor.getLeft().pos().equals(pos)) {
+            actor.setLeft(c.getBlocks().get(pos));
+            if (actor.getRight() != null) actor.getRight().blockEntityData = data.copy();
+        }
         var handler = com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.REGISTRY.get(state);
         if (handler == null || state.isAir()) c.getInteractors().remove(pos); else c.getInteractors().put(pos, handler);
         if (c.bounds != null) c.bounds = c.bounds.minmax(new net.minecraft.world.phys.AABB(pos));

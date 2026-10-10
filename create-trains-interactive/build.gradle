@@ -62,11 +62,13 @@ dependencies {
     compileOnly 'maven.modrinth:create-storage-neo-forge:1.1.4-neoforge'
     compileOnly fileTree('dev-libs') { include 'kaleidoscopetavern-*.jar' }
     compileOnly fileTree('dev-libs') { include 'FarmersDelight-*.jar' }
+    compileOnly fileTree('dev-libs') { include 'exposure-*.jar'; include 'createharmonics-*.jar' }
     compileOnly fileTree('dev-libs/on-the-move') { include 'create-on-the-move-*.jar'; include 'createonthemove-*.jar' }
     compileOnly fileTree('dev-libs') { include 'bookshelfinspector-neoforge-2.4+1.21.1.jar' }
     runtimeOnly fileTree('dev-libs') {
         include '*.jar'
         if (project.hasProperty('withoutInspector')) exclude 'bookshelfinspector-*.jar'
+        if (project.hasProperty('withoutServices')) { exclude 'exposure-*.jar'; exclude 'createharmonics-*.jar' }
     }
     verificationImplementation sourceSets.main.output
     if (project.hasProperty('withOnTheMove'))

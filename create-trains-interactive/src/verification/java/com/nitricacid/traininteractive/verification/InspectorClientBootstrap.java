@@ -16,6 +16,11 @@ public final class InspectorClientBootstrap {
         if (finished || !Boolean.getBoolean("create_trains_interactive.verifyInspector")) return;
         finished = true;
         Class.forName("vectorwing.farmersdelight.common.block.entity.container.CookingPotMenu");
+        if (ModList.get().isLoaded("exposure")) {
+            Class.forName("io.github.mortuusars.exposure.world.inventory.LightroomMenu");
+            Class.forName("io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity");
+        }
+        com.nitricacid.traininteractive.client.TrainHarmonicsControls.behaviour(null);
         if (com.nitricacid.traininteractive.client.TrainPickBlock.pick(Minecraft.getInstance()))
             throw new AssertionError("Pick Block must safely ignore a client without a world");
         if (ModList.get().isLoaded("bookshelfinspector")) {
